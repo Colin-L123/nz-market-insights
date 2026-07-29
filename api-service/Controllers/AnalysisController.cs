@@ -42,16 +42,22 @@ public class AnalysisController : ControllerBase
         var lines = data.Select(x => $"{x.BaseCurrency} to {x.TargetCurrency}: {x.Rate}");
         return string.Join("\n", lines);
     }
+    // 上限：不管前端传不传筛选条件，单个 category 最多只拿最近 MaxRowsPerCategory 条塞进 prompt，
+    // 防止用户勾选了某个表但没设筛选条件时，把全表（几千行）都发给 AI 造成意外花费
+    private const int MaxRowsPerCategory = 30;
+
     private async Task<string> SummarizeHousingAffordability(HousingAffordabilitySelection s)
     {
         var data = await _housingAffordabilityService.Query(s.AreaName, s.AreaType, s.DateFrom, s.DateTo);
-        var lines = data.Select(x => $"area: {x.AreaName}, type: {x.AreaType}, Mortgage Affordability Index: {x.MortgageAffordabilityIndex}, Deposit Affordability Index: {x.DepositAffordabilityIndex}, Rent Affordability Index: {x.RentAffordabilityIndex}");
+        var limited = data.OrderByDescending(x => x.RecordDate).Take(MaxRowsPerCategory);
+        var lines = limited.Select(x => $"area: {x.AreaName}, type: {x.AreaType}, Mortgage Affordability Index: {x.MortgageAffordabilityIndex}, Deposit Affordability Index: {x.DepositAffordabilityIndex}, Rent Affordability Index: {x.RentAffordabilityIndex}");
         return string.Join("\n", lines);
     }
     private async Task<string> SummarizeHousingSalePrice(HousingSalePriceSelection s)
     {
         var data = await _housingSalePriceService.Query(s.AreaName, s.AreaType, s.YearFrom, s.YearTo);
-        var lines = data.Select(x => $"area: {x.AreaName}, type: {x.AreaType}, cost_per_m2: {x.CostPerM2}, average price per house: {(x.NumberSales > 0 ? (x.SumSalePrice / x.NumberSales).ToString() : "N/A")}");
+        var limited = data.OrderByDescending(x => x.Year).Take(MaxRowsPerCategory);
+        var lines = limited.Select(x => $"area: {x.AreaName}, type: {x.AreaType}, cost_per_m2: {x.CostPerM2}, average price per house: {(x.NumberSales > 0 ? (x.SumSalePrice / x.NumberSales).ToString() : "N/A")}");
         return string.Join("\n", lines);
     }
 
@@ -76,7 +82,7 @@ public class AnalysisController : ControllerBase
             summaries.Add(summary);
         }
         string combinedData = string.Join("\n\n", summaries);
-        string fullPrompt = $"user's data: \n{combinedData}\n\n user's question: {request.Prompt}";
+        string fullPrompt = $"user's data: \n{combinedData}\n\n user's question: {request.Prompt}\n\n请将回答整体控制在 400 字以内，确保内容完整、不要在句子中途被截断。";
         var result = await _claudeService.GenerateAnalysis(fullPrompt);
         return Ok(result);
     }

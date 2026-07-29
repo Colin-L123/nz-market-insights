@@ -11,16 +11,16 @@ public class HousingSalePriceService
         _context = context;
     }
 
-    public async Task<List<HousingSalePrice>> Query(string? areaName = null, string? areaType = null, int? yearFrom = null, int? yearTo = null)
+    public async Task<List<HousingSalePrice>> Query(string[]? areaName = null, string[]? areaType = null, int? yearFrom = null, int? yearTo = null)
     {
         IQueryable<HousingSalePrice> query = _context.HousingSalePrice;
         if(areaName != null)
         {
-            query = query.Where(x => x.AreaName == areaName);
+            query = query.Where(x => areaName.Contains(x.AreaName));
         }
          if(areaType != null)
         {
-            query = query.Where(x => x.AreaType == areaType);
+            query = query.Where(x => areaType.Contains(x.AreaType));
         } 
         if(yearFrom != null)
         {

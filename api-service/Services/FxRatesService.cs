@@ -13,12 +13,12 @@ public class FxRatesService
         _context = context;
     }
 
-    public async Task<List<FxRate>> Query(string? target = null)
+    public async Task<List<FxRate>> Query(string[]? target = null)
     {
         IQueryable<FxRate> query = _context.FxRates;
         if(target != null)
         {
-            query = query.Where(x => x.TargetCurrency == target);
+            query = query.Where(x => target.Contains(x.TargetCurrency));
         }
         var fxRates = await query.ToListAsync();
         return fxRates;

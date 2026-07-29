@@ -13,16 +13,16 @@ public class HousingAffordabilityService
         _context = context;
     }
 
-    public async Task<List<HousingAffordability>> Query(string? areaName = null, string? areaType = null, DateOnly? dateFrom = null, DateOnly? dateTo = null)
+    public async Task<List<HousingAffordability>> Query(string[]? areaName = null, string[]? areaType = null, DateOnly? dateFrom = null, DateOnly? dateTo = null)
     {
         IQueryable<HousingAffordability> query = _context.HousingAffordability;
         if(areaName != null)
         {
-            query = query.Where(x => x.AreaName == areaName);
+            query = query.Where(x => areaName.Contains(x.AreaName));
         }
          if(areaType != null)
         {
-            query = query.Where(x => x.AreaType == areaType);
+            query = query.Where(x => areaType.Contains(x.AreaType));
         } 
         if(dateFrom != null)
         {

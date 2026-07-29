@@ -1,0 +1,13 @@
+@reference "../index.css";
+.section-wrapper {
+  @apply mb-10 pb-8;
+  border-bottom: 1px solid var(--gridline);
+}
+.section-wrapper:last-child {
+  @apply mb-0 pb-0;
+  border-bottom: none;
+}
+.section-title {
+  color: var(--text-primary);
+  @apply text-xl font-semibold mb-4;
+}

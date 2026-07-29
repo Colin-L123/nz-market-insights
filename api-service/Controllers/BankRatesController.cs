@@ -16,7 +16,7 @@ public class BankRatesController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAll([FromQuery] string? bank = null, [FromQuery] string? term = null)
+    public async Task<IActionResult> GetAll([FromQuery] string[]? bank = null, [FromQuery] string[]? term = null)
     {
         var bankRates = await _bankRateService.Query(bank, term);
         if (bankRates == null || bankRates.Count == 0)

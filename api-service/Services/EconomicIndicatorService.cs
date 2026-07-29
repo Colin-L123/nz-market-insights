@@ -13,12 +13,12 @@ public class EconomicIndicatorService
         _context = context;
     }
 
-    public async Task<List<EconomicIndicator>> Query(string? indicatorName = null, int? yearFrom = null, int? yearTo = null)
+    public async Task<List<EconomicIndicator>> Query(string[]? indicatorName = null, int? yearFrom = null, int? yearTo = null)
     {
         IQueryable<EconomicIndicator> query= _context.EconomicIndicators;
         if(indicatorName != null)
         {
-            query = query.Where(x => x.IndicatorName == indicatorName);
+            query = query.Where(x => indicatorName.Contains(x.IndicatorName));
         }
         if(yearFrom != null)
         {

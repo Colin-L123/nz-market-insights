@@ -20,7 +20,7 @@ public class HousingAffordabilityController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAll([FromQuery] string? areaName = null, [FromQuery] string? areaType = null, [FromQuery] DateOnly? dateFrom = null, [FromQuery] DateOnly? dateTo = null)
+    public async Task<IActionResult> GetAll([FromQuery] string[]? areaName = null, [FromQuery] string[]? areaType = null, [FromQuery] DateOnly? dateFrom = null, [FromQuery] DateOnly? dateTo = null)
     {
         var h_aff = await _haffs.Query(areaName, areaType, dateFrom, dateTo);
         var totalCount = h_aff.Count;

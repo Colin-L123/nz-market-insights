@@ -16,7 +16,7 @@ public class HousingSalePriceController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAll([FromQuery] string? areaName = null, [FromQuery] string? areaType = null, [FromQuery] int? yearFrom = null, [FromQuery] int? yearTo = null)
+    public async Task<IActionResult> GetAll([FromQuery] string[]? areaName = null, [FromQuery] string[]? areaType = null, [FromQuery] int? yearFrom = null, [FromQuery] int? yearTo = null)
     {
         
         var hsp = await _housingSalePriceService.Query(areaName, areaType, yearFrom, yearTo);

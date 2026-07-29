@@ -41,6 +41,8 @@ def parse_prices(data: dict) -> list[dict]:
     items = []
     for item in data["rates"]:
         term = item["term"]
+        if term["duration"] == 0:
+            continue
         rate = item["cardedInterestRate"]
         items.append({"term": f"{term["duration"]} {term["unit"]}", "rate": rate})
     return deduplicate(sorted(items, key = lambda x: x["rate"]), key = lambda x: x["rate"])

@@ -12,16 +12,16 @@ public class BankRateService
         _context = context;
     }
 
-    public async Task<List<BankRate>> Query(string? bank = null, string? term = null)
+    public async Task<List<BankRate>> Query(string[]? bank = null, string[]? term = null)
     {
         IQueryable<BankRate> query = _context.BankRates;
         if(bank != null)
         {
-            query = query.Where(x => x.Bank == bank);
+            query = query.Where(x => bank.Contains(x.Bank));
         }
         if(term != null)
         {
-            query = query.Where(x => x.Term == term);
+            query = query.Where(x => term.Contains(x.Term));
         }
         var bankRates = await query.ToListAsync();
         

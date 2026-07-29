@@ -1,0 +1,21 @@
+@reference "./index.css";
+
+.main-nav {
+  @apply flex gap-6 px-8 py-4;
+  background-color: var(--surface-1);
+  border-bottom: 1px solid var(--gridline);
+}
+
+.main-nav-link {
+  @apply font-medium no-underline;
+  color: var(--text-secondary);
+}
+
+.main-nav-link:hover {
+  color: var(--text-primary);
+}
+
+.placeholder-page {
+  @apply p-8;
+  color: var(--text-secondary);
+}

@@ -1,0 +1,9 @@
+@reference "../index.css";
+.home-page {
+  @apply p-8 min-h-screen max-w-6xl mx-auto;
+  background-color: var(--surface-page);
+}
+.home-page-title {
+  color: var(--text-primary);
+  @apply text-3xl font-bold mb-8;
+}

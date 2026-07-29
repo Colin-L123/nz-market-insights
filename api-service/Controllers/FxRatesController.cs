@@ -14,7 +14,7 @@ public class FxRatesController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAll([FromQuery] string? target = null)
+    public async Task<IActionResult> GetAll([FromQuery] string[]? target = null)
     {
         var fxRates = await _fxRateService.Query(target);
         if (fxRates == null || fxRates.Count == 0)

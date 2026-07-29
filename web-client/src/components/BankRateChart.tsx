@@ -1,0 +1,29 @@
+import EChartsReact from "echarts-for-react";
+import type { BankRate } from "../types/BankRate";
+import { seriesColors } from "../styles/chartColors";
+import { chartBase, axisLineStyle, splitLineStyle } from "../styles/chartTheme";
+
+function termToDays(term: string): number {
+    const [numStr, unit] = term.split(' ')
+    const num = Number(numStr)
+    if (unit.startsWith('day')) return num
+    if (unit.startsWith('month')) return num * 30
+    if (unit.startsWith('year')) return num * 365
+    return 0
+}
+
+export default function BankRateChart({data}: {data: BankRate[]}){
+    const sorted = [...data].sort((a,b) => termToDays(a.term) - termToDays(b.term))
+    const terms = sorted.map(d => d.term)
+    const rates = sorted.map(d => d.rate)
+    const option = {
+    ...chartBase('BNZ Term Deposit Rates', 'Interest rate by deposit term length'),
+    grid: { top: 70, left: 60, right: 30, bottom: 50, containLabel: true },
+    xAxis: { type: 'category', data: terms, axisLine: axisLineStyle },
+    yAxis: { type: 'value', name: 'Interest Rate (%)', nameLocation: 'middle', nameGap: 40, axisLine: axisLineStyle, splitLine: splitLineStyle },
+    series: [{ type: 'bar', data: rates, color: seriesColors[0] }]
+}
+
+    return <EChartsReact option={option}/>
+
+}

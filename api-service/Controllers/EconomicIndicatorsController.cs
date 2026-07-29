@@ -26,7 +26,7 @@ public class EconomicIndicatorsController : ControllerBase
     [HttpGet]  // 贴在方法上：这个方法响应 GET 请求 (跟贴在类上的 [Route] 不同，这个更具体到某个方法)
     // async 标记这个方法内部会用 await；返回类型必须包一层 Task<>（语法规定）
     // IActionResult：泛指"某种HTTP响应"（可能是 Ok / NotFound / BadRequest 等）
-    public async Task<IActionResult> GetAll([FromQuery] string? indicatorName = null, [FromQuery] int? yearFrom = null, [FromQuery] int? yearTo = null)
+    public async Task<IActionResult> GetAll([FromQuery] string[]? indicatorName = null, [FromQuery] int? yearFrom = null, [FromQuery] int? yearTo = null)
     {
         // 筛选+查询的逻辑都在 EconomicIndicatorService.Query() 里，这里只传参数、拿结果
         var indicator = await _economicIndicatorService.Query(indicatorName, yearFrom, yearTo);
