@@ -49,3 +49,12 @@ CREATE TABLE IF NOT EXISTS economic_indicators(
     year integer,
     value numeric
 );
+
+CREATE TABLE IF NOT EXISTS loan_rates(
+    id serial primary key,
+    bank text,
+    product text,
+    term text,
+    rate numeric,
+    fetched_at timestamp
+);

@@ -2,9 +2,10 @@ from fetch_bank_rates import fetch_page as fetch_bnz_page, parse_prices, BNZ_API
 from fetch_fx import fetch_page as fetch_fx_rate, FX_API_URL
 from fetch_worldbank import fetch_all_indicators
 from fetch_housing import fetch_page as fetch_housing_page, parse_csv, AFFORADBILITY_CSV_URL, SALE_PRICE_CSV_URL
+from fetch_loan_rates import fetch_loan_page, parse_loan_rates, BNZ_LOAN_API_URL
 
 from datetime import datetime
-from db import replace_table
+from db import replace_table, keep_history_table
 
 def load_bank_rates():
     """Fetch + transform + load BNZ bank rates into bank_rates table."""
@@ -15,7 +16,16 @@ def load_bank_rates():
     for r in rates_par:
         rows.append(("BNZ",r["term"],r["rate"],datetime.now()))
 
-    replace_table("bank_rates",["bank","term","rate","fetched_at"],rows)
+    keep_history_table("bank_rates",["bank","term","rate","fetched_at"],rows)
+
+def load_loan_rates():
+    """Fetch + transform + load BNZ home loan rates into loan_rates table."""
+    xml_text = fetch_loan_page(BNZ_LOAN_API_URL)
+    items = parse_loan_rates(xml_text)
+    rows = []
+    for item in items:
+         rows.append(("BNZ", item["product"],item["term"],item["rate"],datetime.now()))
+    keep_history_table("loan_rates", ["bank","product","term","rate","fetched_at"], rows)
 
 def load_fx_rates():
     """Fetch rxchange rate for USD,EUR,CNY,AUD,GBP,JPY,SGD"""
@@ -23,7 +33,7 @@ def load_fx_rates():
     rows = []
     for currency, rate in fx_rate["rates"].items():
         rows.append((fx_rate["base"],currency,rate,fx_rate["date"],datetime.now()))
-    replace_table("fx_rates",["base_currency","target_currency","rate","rate_date","fetched_at"],rows)
+    keep_history_table("fx_rates",["base_currency","target_currency","rate","rate_date","fetched_at"],rows)
 
 def load_economic_indicators():
     """fetch world bank indicators"""
@@ -54,6 +64,7 @@ def na_to_none(value):
     
 if __name__ == "__main__":
     load_bank_rates()
+    load_loan_rates()
     load_fx_rates()
     load_economic_indicators()
     load_housing()

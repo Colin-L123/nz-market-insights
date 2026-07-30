@@ -27,6 +27,7 @@ builder.Services.AddScoped<BankRateService>();
 builder.Services.AddScoped<HousingAffordabilityService>();
 builder.Services.AddScoped<HousingSalePriceService>();
 builder.Services.AddScoped<ClaudeService>();
+builder.Services.AddScoped<LoanRateService>();
 
 // 注册 Controller 相关基础设施 —— 少了这行，Controller 上的路由不会被框架识别
 builder.Services.AddControllers();

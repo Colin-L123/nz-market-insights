@@ -20,7 +20,8 @@ public class FxRatesService
         {
             query = query.Where(x => target.Contains(x.TargetCurrency));
         }
-        var fxRates = await query.ToListAsync();
+        var latest = query.GroupBy(x=>new {x.BaseCurrency, x.TargetCurrency}).Select(g=>g.OrderByDescending(x=>x.FetchedAt).First());
+        var fxRates = await latest.ToListAsync();
         return fxRates;
     }
 }

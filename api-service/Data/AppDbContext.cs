@@ -24,4 +24,5 @@ public class AppDbContext : DbContext
     public DbSet<FxRate> FxRates { get; set; }
     public DbSet<HousingAffordability> HousingAffordability { get; set; }
     public DbSet<HousingSalePrice> HousingSalePrice { get; set; }
+    public DbSet<LoanRate> LoanRates { get; set; }
 }

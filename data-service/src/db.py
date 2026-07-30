@@ -30,6 +30,19 @@ def replace_table(table:str, columns:list[str],rows:list[tuple]):
     finally:
         conn.close()
 
+def keep_history_table(table:str, columns:list[str],rows:list[tuple]):
+    columns_sql = ", ".join(columns)
+    palceholders = ", ".join(["%s"]*len(columns))
+    insert_sql = f"INSERT INTO {table} ({columns_sql}) VALUES ({palceholders})"
+    conn = get_connection()
+    # print("connected:",conn)
+    try:
+        with conn.cursor() as cur:
+            cur.executemany(insert_sql, rows)
+        conn.commit()
+    finally:
+        conn.close()
+
 
 if __name__ =="__main__":
     replace_table("bank_rates", ["bank", "term", "rate"], [("BNZ", "7 day", 1.7)])

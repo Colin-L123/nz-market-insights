@@ -3,6 +3,7 @@ import { getBankRates } from "../api/bankRates"
 import { getHousingAffordability } from "../api/housingAffordability"
 import { getFxRates } from "../api/fxRates"
 import { getHousingSalePrice } from "../api/housingSalePrice"
+import { getLoanRates } from "../api/loanRates"
 import useFetchData from "../hooks/useFetchData"
 
 import EconomicIndicatorChart from "../components/EconomicIndicatorChart"
@@ -18,6 +19,7 @@ import HousingSalePriceTrendChart from "../components/HousingSalePriceTrendChart
 import HousingSalePriceVolumeChart from "../components/HousingSalePriceVolumeChart"
 import HousingSalePricePcrChart from "../components/HousingSalePricePcrChart"
 import HousingSalePricePcrTrendChart from "../components/HousingSalePricePcrTrendChart"
+import LoanRateChart from "../components/LoanRateChart"
 
 
 export default function HomePage() {
@@ -26,6 +28,7 @@ export default function HomePage() {
     const fxRate = useFetchData(getFxRates)
     const haff = useFetchData(getHousingAffordability)
     const hsp = useFetchData(getHousingSalePrice)
+    const loanRate = useFetchData(getLoanRates)
 
     return <div className="home-page">
         <h1 className="home-page-title">Default Display (Chart + AI Summary) — In Progress</h1>
@@ -37,6 +40,9 @@ export default function HomePage() {
         </Section>
         <Section title="BNZ Term Deposit Rates">
             <BankRateChart data={bankRate} />
+        </Section>
+        <Section title="BNZ Home Loan Rates">
+            <LoanRateChart data={loanRate} />
         </Section>
         <Section title="Exchange Rates">
             <FxRateChart data={fxRate} />
