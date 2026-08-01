@@ -5,16 +5,18 @@ from sqlalchemy import create_engine
 def get_connection():
     """Create a new connection to the local PostgreSQL, config from .env"""
     load_dotenv()
-    connection = psycopg2.connect(host="localhost", port=5432, dbname=os.getenv("POSTGRES_DB"), user= os.getenv("POSTGRES_USER"), password= os.getenv("POSTGRES_PASSWORD"))
+    host = os.getenv("POSTGRES_HOST", "localhost")
+    connection = psycopg2.connect(host=host, port=5432, dbname=os.getenv("POSTGRES_DB"), user= os.getenv("POSTGRES_USER"), password= os.getenv("POSTGRES_PASSWORD"))
     return connection
 
 def get_engine():
     """Create a SQLAlchemy engine, for pandas read_sql/to_sql (which warn on raw psycopg2 connections)."""
     load_dotenv()
+    host = os.getenv("POSTGRES_HOST", "localhost")
     user = os.getenv("POSTGRES_USER")
     password = os.getenv("POSTGRES_PASSWORD")
     db = os.getenv("POSTGRES_DB")
-    return create_engine(f"postgresql+psycopg2://{user}:{password}@localhost:5432/{db}")
+    return create_engine(f"postgresql+psycopg2://{user}:{password}@{host}:5432/{db}")
 
 def replace_table(table:str, columns:list[str],rows:list[tuple]):
     columns_sql = ", ".join(columns)

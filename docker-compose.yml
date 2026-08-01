@@ -10,6 +10,23 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
       - ./db/schema.sql:/docker-entrypoint-initdb.d/schema.sql
-
+  data-service:
+    build: ./data-service
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_HOST: db
+    depends_on:
+      - db
+  api-service:
+    build: ./api-service
+    environment:
+      ConnectionStrings__DefaultConnection: "Host=db;port=5432;DataBase=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}"
+      Anthropic__ApiKey: ${ANTHROPIC_API_KEY}
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
 volumes:
   pgdata:

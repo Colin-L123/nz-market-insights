@@ -9,7 +9,7 @@ public class ClaudeService
 
     public ClaudeService(IConfiguration configuration)
     {
-        var apiKey = configuration["Anthropic: ApiKey"];
+        var apiKey = configuration["Anthropic:ApiKey"];
         _client = new AnthropicClient {ApiKey = apiKey};
     }
 
