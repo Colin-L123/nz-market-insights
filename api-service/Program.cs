@@ -37,7 +37,7 @@ builder.Services.AddCors(Options =>
 {
     Options.AddPolicy("AllowReactApp", policy =>
     {
-        policy.WithOrigins("http://localhost:5173", "https://d964krhr6mofu.cloudfront.net").AllowAnyMethod().AllowAnyHeader();
+        policy.WithOrigins("http://localhost:5173", "https://d964krhr6mofu.cloudfront.net", "https://nz-market-insights.colinl.xyz").AllowAnyMethod().AllowAnyHeader();
     });
 });
 
