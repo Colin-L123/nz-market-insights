@@ -28,7 +28,7 @@
 | Phase 3 | Week 5-6 | C# Web API（基础 GET + 个性化分析接口） | ✅ 已完成 —— 5张表基础GET接口 + AI个性化分析接口（多态DTO + Service层 + 官方Claude SDK）全部跑通 |
 | Phase 4 | Week 7 | React 前端（默认展示 + AI个性化交互 + 用户自主筛选） | ✅ 已完成 —— `HomePage`（默认展示）+ `AnalysisPage`（AI 交互与自主筛选合并成一个页面，含图表、多选筛选、成本控制） |
 | **Phase 5** | **Week 8** | **整合联调** | 🔄 **核心链路已验证跑通**（抓数据→存库→C# API→React 展示，含 AI 分析，端到端测试通过），**下一步**：过一遍 Week1-7 剩下的边界情况/错误处理细节 |
-| Phase 6 | Week 9-10 | 容器化 + AWS 部署 + 定时任务 + 历史数据追加模式 | ⬜ 未开始 |
+| Phase 6 | Week 9-10 | 容器化 + AWS 部署 + 定时任务 + 历史数据追加模式 | 🔄 核心部署已完成(详见 [DEPLOYMENT.md](DEPLOYMENT.md))，剩定时任务/RDS/趋势图 |
 | Phase 7 | Week 11 | 测试 + 文档 + 数据分析深化 | ⬜ 未开始 |
 | Phase 8 | Week 12 | 收尾与面试冲刺 | ⬜ 未开始 |
 
@@ -92,19 +92,27 @@
 
 ### Phase 6／Week 9-10 — 容器化 + AWS 部署 + 数据源扩展
 - **任务**：写完整 `docker-compose.yml`（三个服务都容器化），Postgres 迁到 RDS，服务部署到 EC2，配置定时任务定期刷新数据
-- **新增数据源——贷款利率（loan interest rates）**：目前只抓了 BNZ 定期存款利率（`bank_rates`），需要补充贷款利率（比如房贷利率）。开始这项时先做一遍数据源可行性研究（类似 Week1 找 BNZ API 的方式，看 BNZ/其他银行的官网或 API 有没有现成的贷款利率接口），确认可行后新增 `fetch_loan_rates.py` + 对应表
+- **部署核心链路 ✅ 已完成**（原理/步骤/踩坑全部记在 [DEPLOYMENT.md](DEPLOYMENT.md)，这里只列结论）：
+  - 三个服务容器化（`db`/`data-service`/`api-service`），`docker-compose.yml` 加了 `healthcheck` 解决启动顺序竞态问题
+  - EC2 装 Docker，`git clone` 部署，`.pem`/`.env` 密钥管理到位
+  - 前端 S3（私有桶 + CloudFront OAC）+ CloudFront 托管，SPA 路由兜底（403/404 → index.html）
+  - API 前面也套了一层 CloudFront（解决 HTTPS 前端请求 HTTP 后端的 Mixed Content 问题），CORS 白名单同步更新
+  - 安全组按最小权限配置，WAF 等额外收费项主动避开
+  - **`GetAll()` 类接口的"每组取最新一条"（`GroupBy`+`OrderByDescending`）在 Phase 3 写 Controller 时就已经顺手做了，早于这里的计划**，本节原本列的"配套接口改动"里这一项不用再做
+- **剩余待办**：~~定时任务（cron/EventBridge）~~ ✅ 已用 cron 完成（每3天自动刷新）、Postgres 迁 RDS、自定义域名替换 `*.cloudfront.net`（进行中）、bank_rates/fx_rates 的历史趋势查询接口+前端 Trend 图表
+- **新增数据源——贷款利率（loan interest rates）✅ 已完成**：`fetch_loan_rates.py` + `LoanRatesController`/`LoanRateService` + 前端 `LoanRateChart` 全部落地，BNZ 房贷利率已接入
 - **可选数据源清单（backlog，做首页"专业感"审查时对照Trading Economics/interest.co.nz等主流平台找出的缺口，已做过一轮可行性验证，仅记录不阻塞主线，有余力再补，没时间就跳过）**：
   - **OCR官方现金利率**（比银行存款利率更根本的驱动因素）：🟡 RBNZ官网被Cloudflare拦截（跟Week1抓RBNZ时同样的情况），但BNZ当初也是靠F12找到官网背后的JSON API绕过去的，OCR可能有类似的路，没验证过，值得到时候花点时间试
   - **零售销售（Retail Sales）**：🟡 Stats NZ 有相关数据但搜到的是2015-2017年旧数据集，不确定是否持续更新；Stats NZ 的 **Infoshare** 工具（`infoshare.stats.govt.nz`）确认不需要登录、可直接导出CSV，大概率能找到，但需要到时候手动在分类目录里导航定位
   - **建筑许可（Building Consents）**：🟡 没找到全国层面数据集，只有零散的地区议会数据，全国数据大概率也在 Stats NZ Infoshare 里，需要到时候手动导航
   - **商业信心指数PMI/PSI（BusinessNZ）**：❌ 官网403拦截，没找到可下载CSV/API，优先级低
   - **企业/消费者信心指数（ANZ）**：❌ 只找到PDF报告，没有API/CSV，优先级最低
-- **历史数据追加模式（之前"待定"的决策，现已确认要做）**：`bank_rates`/`fx_rates`/新增的贷款利率表，把"覆盖式"（每次 `TRUNCATE` 重插，只留最新快照）改成"追加式"——每次抓取新增一行而不是清空重插，靠 `fetched_at` 这个日期属性区分"这一行是哪次抓取产生的历史记录"，这样才能积累出利率/汇率随时间变化的趋势，而不是只有一张当前快照。这一步要和定时任务一起配置，避免定时抓取时把历史记录覆盖掉
-- **配套的接口改动（Phase 3 写 `BankRatesController`/`FxRatesController` 时发现的，先记录，Phase 6 落地）**：切到追加式存储后，同一个 bank+term（或 fx 的 base+target）会同时存在多条历史记录，届时：
-  - 现有的"当前利率/汇率"`GetAll()` 接口要改成"每组只取最新一条"（`GroupBy` + 取每组最新，比现在的筛选写法更进一步）
-  - 主页"利率/汇率变化趋势图"需要**另一个专门的历史查询接口**，返回完整时间序列（数据形状跟"当前快照"不同），不能直接复用 `GetAll()`
-- **学习要点**：Dockerfile 编写、Linux 命令行操作（SSH、systemd/cron、看日志）、AWS 基础（EC2/RDS/安全组）、"追加式"存储的表设计思路（依赖时间字段而不是主键去重）、`GroupBy` 取每组最新记录的 LINQ 写法
-- **达成标志**：有一个公网可访问的链接，点开是活的看板；`bank_rates`/`fx_rates`/贷款利率能看到随时间积累的历史记录，不再只有最新一条
+- **历史数据追加模式 ✅ 已完成**：`bank_rates`/`fx_rates`/`loan_rates` 都已切成"追加式"（`keep_history_table`，靠 `fetched_at` 区分历史记录），不再是每次清空重插的快照
+- **配套的接口改动**：
+  - ✅ `GetAll()` 类接口的"每组只取最新一条"（`GroupBy`+`OrderByDescending`+`First`）——Phase 3 写 Controller 时就顺手做了
+  - ⬜ 主页"利率/汇率变化趋势图"需要**另一个专门的历史查询接口**，返回完整时间序列，还没做（详见 [DEPLOYMENT.md](DEPLOYMENT.md) 待办部分）
+- **学习要点**：Dockerfile 编写、Linux 命令行操作（SSH、systemd/cron、看日志）、AWS 基础（EC2/RDS/安全组/CloudFront/S3）、"追加式"存储的表设计思路（依赖时间字段而不是主键去重）、Mixed Content/CORS 两层跨域安全机制的区别
+- **达成标志**：✅ 有一个公网可访问的链接，点开是活的看板（`https://d964krhr6mofu.cloudfront.net`）；⬜ `bank_rates`/`fx_rates`/贷款利率能看到随时间积累的历史记录，不再只有最新一条——数据库层面已具备，前端展示还没做
 
 ### Phase 7／Week 11 — 测试与文档 + 数据分析深化
 - **任务**：补 xUnit（C#）/pytest（Python）基础测试，完善 README（架构图、运行方式、技术亮点）
