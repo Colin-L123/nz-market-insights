@@ -3,7 +3,7 @@ using Anthropic.Models.Messages;
 
 namespace ApiService.Services;
 
-public class ClaudeService
+public class ClaudeService: IClaudeService
 {
     private readonly AnthropicClient _client;
 

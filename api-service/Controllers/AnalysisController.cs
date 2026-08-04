@@ -12,9 +12,9 @@ public class AnalysisController : ControllerBase
     private readonly FxRatesService _fxRatesService;
     private readonly HousingAffordabilityService _housingAffordabilityService;
     private readonly HousingSalePriceService _housingSalePriceService;
-    private readonly ClaudeService _claudeService;
+    private readonly IClaudeService _claudeService;
 
-    public AnalysisController(EconomicIndicatorService economicIndicatorService, BankRateService bankRateService, FxRatesService fxRatesService, HousingAffordabilityService housingAffordabilityService, HousingSalePriceService housingSalePriceService, ClaudeService claudeService)
+    public AnalysisController(EconomicIndicatorService economicIndicatorService, BankRateService bankRateService, FxRatesService fxRatesService, HousingAffordabilityService housingAffordabilityService, HousingSalePriceService housingSalePriceService, IClaudeService claudeService)
     {
         _economicIndicatorService = economicIndicatorService;
         _fxRatesService = fxRatesService;
