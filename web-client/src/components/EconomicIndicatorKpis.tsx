@@ -11,7 +11,7 @@ export default function EconomicIndicatorKpis({data}: {data: EconomicIndicator[]
     return(
         <div className="kpi-grid">
             {latestValues.map(item => item && (
-                <KpiCard key = {item.indicatorName} label = {`${indicatorLabels[item.indicatorName] ?? item.indicatorName} (${item.year})`} value={item.value}/>
+                <KpiCard key = {item.indicatorName} label = {`${indicatorLabels[item.indicatorName] ?? item.indicatorName} (${item.year})`} value={item.value} />
             ))}
         </div>
     )

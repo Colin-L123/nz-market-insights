@@ -1,3 +1,4 @@
+import { formatNumber } from "../utils/format"
 export const axisLineStyle = { lineStyle: { color: '#383835' } }
 export const splitLineStyle = { lineStyle: { color: '#2c2c2a' } }
 
@@ -13,6 +14,6 @@ export function chartBase(title: string, subtext: string) {
             textStyle: { color: '#ffffff' },
             subtextStyle: { color: '#898781' }
         },
-        tooltip: { trigger: 'axis' },
+        tooltip: { trigger: 'axis', valueFormatter: (value: number) => formatNumber(value) },
     }
 }
