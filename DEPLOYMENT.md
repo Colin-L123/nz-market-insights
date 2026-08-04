@@ -27,6 +27,41 @@
 
 **两个 CloudFront 是两件独立的事**：一个专门代理前端静态文件（源是 S3），一个专门代理后端 API（源是 EC2）。不是"一个 CloudFront 管全部"，而是"每个源站配一个 CloudFront 入口"。
 
+## 本地开发 vs 线上生产，对照表
+
+**本地和线上是两条完全平行、互不相通的链路**——两边共享的只有同一份代码（通过 `git push`/`git pull` 传递），运行时的数据库、网络、进程完全独立。本地随便改随便测，不会意外影响线上正在服务的真实用户，除非主动 `git push` + 服务器 `git pull` + 重新部署。
+
+### 数据库（Postgres）
+| | 本地 | 线上（EC2） |
+|---|---|---|
+| 怎么起 | `docker compose up -d db`（本地 Docker Desktop） | 已经在 EC2 的 Docker 里常驻跑着 |
+| 配置来源 | 项目根目录本地的 `.env` | EC2 服务器上 `git clone` 下来那份 `.env`（各管各的，密码可以不一样） |
+| 数据 | 存本地 Docker 的 volume，只有自己电脑能连（`localhost:5432`） | 存 EC2 那台机器的 volume |
+| 关键点 | 两边跑的是同一份 `docker-compose.yml` 定义，但因为在两台不同物理机器上，产生的是两个完全独立、**数据不共享**的实例 |
+
+### Python（data-service，抓数据脚本）
+| | 本地 | 线上（EC2） |
+|---|---|---|
+| 怎么起 | 直接 `python src/load_data.py`（用本地 `.venv`，改代码直接生效），或 `docker compose run --rm data-service`（走容器） | cron 每 3 天自动触发一次 `docker compose run --rm data-service` |
+| 配置来源 | 本地 `.env`；`POSTGRES_HOST` 没设置时 `db.py` fallback 成 `localhost` | docker-compose 的 `environment:` 注入 `POSTGRES_HOST=db` |
+| 关键点 | 同一份代码，靠 `POSTGRES_HOST` 这一个环境变量的值不同（`localhost` vs `db`），分别连到"各自那台机器上的数据库" |
+
+### C#（api-service）
+| | 本地 | 线上（EC2） |
+|---|---|---|
+| 怎么起 | `dotnet watch run`（改代码自动热重载） | Docker 容器常驻跑着 |
+| 配置来源 | **User Secrets**（存在系统某个文件夹，不在项目代码里，不会被提交到 git） | docker-compose 的 `environment:` 注入 |
+| 连的数据库 | `Host=localhost` | `Host=db`（容器内部网络服务名） |
+| 监听端口 | `8080`（`launchSettings.json`，原本是 `5110`，为了跟 Docker 版本统一改成了 `8080`） | `8080`（Dockerfile 里 `ASPNETCORE_URLS` 设的） |
+| 关键点 | 想改代码调试用这种方式，不用每次重新 build 镜像；想验证"容器里跑起来是否也正常"再切回 `docker compose up -d --build api-service` |
+
+### React（web-client）
+| | 本地 | 线上 |
+|---|---|---|
+| 怎么起 | `npm run dev`（Vite 开发服务器，热更新，`localhost:5173`） | **不是"跑起来的服务"**——`npm run build` 打包成静态文件上传 S3，CloudFront 分发 |
+| 配置来源 | `.env`（`VITE_API_BASE_URL=http://localhost:8080`） | `.env.production`（`VITE_API_BASE_URL=https://d5jq7yghv598l.cloudfront.net`） |
+| 关键点 | 本地是实时进程，代码改了浏览器立刻刷新；线上是"某一次 build 的快照"，改代码不会自动更新，得重新走 build→传 S3→清 CloudFront 缓存 |
+
 ## 各组件是什么、解决什么问题
 
 ### Docker / Dockerfile / docker-compose

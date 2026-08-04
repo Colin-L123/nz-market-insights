@@ -29,7 +29,7 @@
 | Phase 4 | Week 7 | React 前端（默认展示 + AI个性化交互 + 用户自主筛选） | ✅ 已完成 —— `HomePage`（默认展示）+ `AnalysisPage`（AI 交互与自主筛选合并成一个页面，含图表、多选筛选、成本控制） |
 | **Phase 5** | **Week 8** | **整合联调** | 🔄 **核心链路已验证跑通**（抓数据→存库→C# API→React 展示，含 AI 分析，端到端测试通过），**下一步**：过一遍 Week1-7 剩下的边界情况/错误处理细节 |
 | Phase 6 | Week 9-10 | 容器化 + AWS 部署 + 定时任务 + 历史数据追加模式 | 🔄 核心部署已完成(详见 [DEPLOYMENT.md](DEPLOYMENT.md))，剩定时任务/RDS/趋势图 |
-| Phase 7 | Week 11 | 测试 + 文档 + 数据分析深化 | ⬜ 未开始 |
+| Phase 7 | Week 11 | 测试 + 文档 + 数据分析深化 | 🔄 测试+CI/CD 已完成，剩 README/数据深化 |
 | Phase 8 | Week 12 | 收尾与面试冲刺 | ⬜ 未开始 |
 
 **进度判断：没有拖沓**——Phase 1+2 实际比计划更快完成（Week1+2 花6天，原计划更长），Phase 3、Phase 4 都已完成，Phase 5 的核心链路验证也已经跑通，仍在正常节奏内，不算落后。
@@ -73,7 +73,7 @@
 ### Phase 3／Week 5-6 — C# Web API 🔄 进行中
 - **任务**：ASP.NET Core 项目，EF Core 连同一个 Postgres，写 1-2 个 GET 接口返回数据+总结
 - ✅ 5张表基础 GET 接口全部完成（`EconomicIndicatorsController` 等）
-- ⬜ 待修：`HousingAffordabilityController` 里多余的 `CountAsync()` 查询，改用已查出列表的 `.Count` 属性（和 `HousingSalePriceController` 保持一致写法）
+- ✅ 已修：`HousingAffordabilityController` 现在用的是 `.Count` 属性，跟 `HousingSalePriceController` 写法一致（原先记录的待修项，实际代码已经是对的，文档没同步）
 - ⬜ **新增需求（Phase 2 后期明确的）**：用户自选指标/城市/区域 + 自定义 prompt，实时生成个性化分析（经济形势、理财购房建议等）——这个接口**由 C# 直接调用 Claude API**（用官方 `Anthropic` NuGet包——之前一度以为.NET没有官方SDK、要自己拼JSON发HttpClient，后来查证是记错了，.NET确实有官方SDK），不经过 Python，因为这是实时请求-响应场景，C# 的 async/await 天生适合处理这种"很多用户同时发请求"的情况。查询数据库时按用户选的参数筛选（比如 `WHERE area_name = @area`）
 - **学习要点**：Controller、依赖注入、EF Core 模型映射、async/await、LINQ 查询、官方 `Anthropic` SDK 调用、把用户输入和查出来的数据一起拼进 prompt
 - **达成标志**：浏览器/Postman 访问 `localhost:5000/api/...` 能拿到 JSON 数据；带参数请求个性化分析接口能拿到 AI 生成的文字
@@ -99,7 +99,7 @@
   - API 前面也套了一层 CloudFront（解决 HTTPS 前端请求 HTTP 后端的 Mixed Content 问题），CORS 白名单同步更新
   - 安全组按最小权限配置，WAF 等额外收费项主动避开
   - **`GetAll()` 类接口的"每组取最新一条"（`GroupBy`+`OrderByDescending`）在 Phase 3 写 Controller 时就已经顺手做了，早于这里的计划**，本节原本列的"配套接口改动"里这一项不用再做
-- **剩余待办**：~~定时任务（cron/EventBridge）~~ ✅ 已用 cron 完成（每3天自动刷新）、Postgres 迁 RDS、自定义域名替换 `*.cloudfront.net`（进行中）、bank_rates/fx_rates 的历史趋势查询接口+前端 Trend 图表
+- **剩余待办**：~~定时任务（cron/EventBridge）~~ ✅ 已用 cron 完成（每3天自动刷新）、~~自定义域名替换~~ ✅ 已完成（前端 `nz-market-insights.colinl.xyz`，ACM 证书 + Cloudflare DNS + CloudFront Alternate domain）、Postgres 迁 RDS（暂缓，优先级低）、bank_rates/fx_rates 的历史趋势查询接口+前端 Trend 图表（暂缓，历史数据积累不够）
 - **新增数据源——贷款利率（loan interest rates）✅ 已完成**：`fetch_loan_rates.py` + `LoanRatesController`/`LoanRateService` + 前端 `LoanRateChart` 全部落地，BNZ 房贷利率已接入
 - **可选数据源清单（backlog，做首页"专业感"审查时对照Trading Economics/interest.co.nz等主流平台找出的缺口，已做过一轮可行性验证，仅记录不阻塞主线，有余力再补，没时间就跳过）**：
   - **OCR官方现金利率**（比银行存款利率更根本的驱动因素）：🟡 RBNZ官网被Cloudflare拦截（跟Week1抓RBNZ时同样的情况），但BNZ当初也是靠F12找到官网背后的JSON API绕过去的，OCR可能有类似的路，没验证过，值得到时候花点时间试
@@ -114,17 +114,32 @@
 - **学习要点**：Dockerfile 编写、Linux 命令行操作（SSH、systemd/cron、看日志）、AWS 基础（EC2/RDS/安全组/CloudFront/S3）、"追加式"存储的表设计思路（依赖时间字段而不是主键去重）、Mixed Content/CORS 两层跨域安全机制的区别
 - **达成标志**：✅ 有一个公网可访问的链接，点开是活的看板（`https://d964krhr6mofu.cloudfront.net`）；⬜ `bank_rates`/`fx_rates`/贷款利率能看到随时间积累的历史记录，不再只有最新一条——数据库层面已具备，前端展示还没做
 
+---
+
+## 网站专业性打磨清单（页面功能完善，Phase 6 之后、独立于 Phase 7 数据深化，优先做这个）
+
+历史数据目前太少（cron 刚开始每 3 天积累一次），趋势图暂缓；先把已有数据的**展示质量**打磨到位，这是一个"专业经济分析网站"该有的基本盘。逐项过一遍代码后确认的具体缺口：
+
+- **数据来源与更新时间标注 ✅ 已完成**（原始诉求）：`utils/format.ts` 加了 `formatDate()`，`FxRateChart`/`BankRateChart`/`LoanRateChart` 副标题都改成动态拼接真实 `fetchedAt` + 数据来源（Frankfurter API / BNZ）。KPI 卡片的来源说明（World Bank）暂缓未加。
+- **数字格式统一 ✅ 已完成**（原始诉求）：`utils/format.ts` 加了 `formatNumber()`（`Intl.NumberFormat`，只设 `maximumFractionDigits` 不设最小值，整数不会被硬凑小数、大数字自动千分位）；`chartTheme.ts` 的 `chartBase()` 统一给所有图表的 tooltip 加了 `valueFormatter`，一处改动全图表生效；`KpiCard.tsx` 用上了格式化 + `unit="%"`。
+- **加载状态缺失 ⏸ 暂缓**（今天看代码顺带发现的，非原始诉求）：`useFetchData.ts` 没有 `isLoading`/`error` 状态。评估后判断优先级不高——API 响应快，实际加载窗口很短，用户大概率感知不到；而且改动会牵连 `HomePage.tsx`（6处）+`AnalysisPage.tsx`（5处）调用，波及面比预期大。暂不做，以后觉得有必要再拾起。
+
 ### Phase 7／Week 11 — 测试与文档 + 数据分析深化
 - **任务**：补 xUnit（C#）/pytest（Python）基础测试，完善 README（架构图、运行方式、技术亮点）
+- **测试 ✅ 已完成**（按 NZ 全栈岗位实际要求校准范围，不是照搬 QA/SDET 岗位的工具栈——具体取舍见对话记录，未来可以补进文档）：
+  - **C#（xUnit，`ApiService.Tests/`）**：单元测试覆盖 `BankRateService`/`FxRatesService`/`LoanRateService` 的 `GroupBy` 去重+筛选逻辑（6个）；集成测试用 `WebApplicationFactory` + EF Core InMemory 起内存测试服务器，真实发 HTTP 请求测 `GET /api/BankRates`（404/200 两种状态码）和 `POST /api/Analysis`（3个）。为了让 `AnalysisController` 可测，把 `ClaudeService` 抽出了 `IClaudeService` 接口（依赖倒置），测试里换成 `FakeClaudeService`，不会真的调用付费 AI API。共 9 个测试全过。
+  - **Python（pytest，`data-service/tests/`）**：测 `fetch_*.py` 里的纯解析函数（`parse_prices`/`parse_loan_rates`/`parse_csv`/`na_to_none`），覆盖正常输入+边界情况（缺字段、空数据）。`pytest.ini` 配了 `pythonpath = src`。共 10 个测试全过。
+  - **前端（Vitest，`web-client/src/utils/format.test.ts`）**：只测 `utils/format.ts` 的纯函数（`formatDate`/`formatNumber`），组件本身不写测试（逻辑密度低，投入产出比不划算，判断依据同上）。共 5 个测试全过。
+  - **范围边界**：不用 Playwright/Cypress 端到端测试、不做 k6/JMeter 压测、不做 WCAG 无障碍审查——这些是专职 QA/SDET 岗位的工具栈，跟这个项目瞄准的全栈开发岗位不匹配，引入了反而像是对工具适用场景判断力不够。
 - **数据分析深化**（Phase 2 结束时明确推迟到这里做，全栈主线走完再补）：
   - 用 SQL JOIN 现有5张表做跨数据源分析（比如房价 vs 利率、通胀 vs 失业率，按年份关联）
   - 用 pandas `groupby`/`merge`/`pivot_table` 重做一遍同样的分析，对比"SQL JOIN" vs "pandas merge"两种做法
   - 挑1-2个关键图表用 `matplotlib`/`seaborn` 画出来（比如"过去20年通胀率和房价走势"）
   - 基础相关性分析（比如房价和利率的相关系数）+ 一个简单线性回归（比如"用利率预测房价"），覆盖NZ招聘要求里常见的"statistics modelling"这个点，不只是相关系数
   - 目的：这个项目主要练全栈，但用户希望"全栈+数据"两边都要能达到找工作的技术门槛，这几项是数据岗位面试常考、但项目主线不会自然覆盖到的部分
-- **CI/CD（NZ full-stack招聘要求里明确提到，目前项目完全没有，成本低、信号强，值得补）**：写一个 GitHub Actions workflow，push代码时自动跑 C# 的 xUnit 测试 + Python 的 pytest 测试（先跑通"自动测试"这一步，构建/部署自动化可以留到更熟练再加）
-- **学习要点**：单元测试写法、技术文档写作、SQL JOIN/窗口函数、pandas 进阶聚合、数据可视化基础、简单线性回归、CI/CD 基础概念（GitHub Actions workflow 语法）
-- **达成标志**：`README.md` 能让一个陌生人看懂项目并跑起来；有至少一份"跨数据源"的分析结论和对应图表；push代码能自动触发测试并看到通过/失败结果
+- **CI/CD ✅ 已完成**（`.github/workflows/ci-cd.yml`）：`push`/`pull_request` 自动并行跑三边测试（`dotnet test`+`pytest`+`vitest run`）。额外加了一个 `deploy` job 做 CD——`workflow_dispatch`（手动点击触发，不会自动跑）+ `needs` 依赖三个测试 job 全过才执行，用 `appleboy/ssh-action` SSH 到 EC2 跑 `git pull && docker compose up -d --build`。**故意没有在仓库 Secrets 里配置 `EC2_HOST`/`EC2_SSH_KEY`**，流程完整可用但不会真的触发部署，避免风险，以后需要真启用时自己去仓库设置里加这两个 Secret 即可。YAML 语法已本地校验通过，还没有通过真实 push 触发验证过 Actions 实际运行结果。
+- **学习要点**：xUnit/pytest/Vitest 写法、`WebApplicationFactory`+EF Core InMemory 集成测试、依赖倒置（为可测试性抽接口）、技术文档写作、SQL JOIN/窗口函数、pandas 进阶聚合、数据可视化基础、简单线性回归、CI/CD 基础概念（GitHub Actions workflow 语法、`needs`/`if`/`workflow_dispatch`）
+- **达成标志**：✅ 三边测试全部写完且本地全过（C# 9个 + Python 10个 + 前端 5个）；✅ CI/CD workflow 文件写完，语法校验通过；⬜ `README.md` 完善（还没做）；⬜ push 代码触发 Actions 真实跑一遍确认结果；⬜ 至少一份"跨数据源"的分析结论和对应图表（数据深化部分还没开始）
 - **项目结构性覆盖不到、但NZ市场DA岗位明确要求的两项（建议项目外单独练，不适合硬塞进这个full-stack项目）**：进阶Excel（复杂公式/透视表/PowerQuery）、Power BI/Shiny 仪表盘经验——这两个是具体工具技能，跟"你能不能写代码"是两回事，如果目标岗位偏DA，建议找时间单独用这个项目的同一份数据在Power BI里做1-2个仪表盘练手，跟主项目脱钩、不影响主线进度
 
 ### Phase 8／Week 12 — 收尾与面试冲刺

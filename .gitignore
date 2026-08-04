@@ -2,13 +2,18 @@
 __pycache__/
 *.pyc
 .venv/
+.pytest_cache/
+.coverage
+htmlcov/
 
 # C#
 bin/
 obj/
+TestResults/
 
 # Node/React
 node_modules/
+coverage/
 
 # 密钥/环境变量（先占位，Week 4 会真正用到）
 .env
