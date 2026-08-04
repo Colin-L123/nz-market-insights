@@ -1,0 +1,69 @@
+name: CI/CD
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  dotnet-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+      - name: Run C# tests
+        run: dotnet test ApiService.Tests/ApiService.Tests.csproj
+
+  python-tests:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: data-service
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Install dependencies
+        run: pip install -r requirements-dev.txt
+      - name: Run Python tests
+        run: pytest
+
+  frontend-tests:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: web-client
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Install dependencies
+        run: npm ci
+      - name: Run frontend tests
+        run: npm test
+
+  # 部署到 EC2。只有手动在 GitHub 网页上点 "Run workflow" 触发（workflow_dispatch）才会跑，
+  # push/PR 不会自动触发这个 job。而且要等上面三个测试 job 全部通过才会执行（needs）。
+  # 目前故意没有在仓库 Secrets 里配置 EC2_HOST/EC2_SSH_KEY，所以就算手动触发，这一步也会在连接
+  # 服务器前失败退出——流程是完整、可运行的，只是还没真正启用，等以后需要了自己去仓库 Settings
+  # 里加上这两个 Secret 即可激活。
+  deploy:
+    runs-on: ubuntu-latest
+    needs: [dotnet-tests, python-tests, frontend-tests]
+    if: github.event_name == 'workflow_dispatch'
+    steps:
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            cd nz-market-insights
+            git pull
+            docker compose up -d --build
