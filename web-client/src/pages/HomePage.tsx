@@ -35,7 +35,7 @@ export default function HomePage() {
     const marketInsights = useFetchData(getMarketInsights)
 
     return <div className="home-page">
-        <h1 className="home-page-title gradient-text">Default Display (Chart + AI Summary) — In Progress</h1>
+        <h1 className="home-page-title gradient-text">New Zealand Market Overview</h1>
         <Section title="Key Indicator">
             <EconomicIndicatorKpis data={ecoIndi} />
         </Section>
@@ -59,7 +59,7 @@ export default function HomePage() {
             <HousingAffordabilityChart data={haff} metric="deposit" />
             <HousingAffordabilityChart data={haff} metric="rent" />
         </Section>
-        <Section title="Housing Affordability Trend Til 2025">
+        <Section title="Housing Affordability Trend">
             <HousingAffordabilityTrendChart data={haff} metric="mortgage" />
             <HousingAffordabilityTrendChart data={haff} metric="deposit" />
             <HousingAffordabilityTrendChart data={haff} metric="rent" />
@@ -68,7 +68,7 @@ export default function HomePage() {
             <HousingSalePriceChart data={hsp} />
             <HousingSalePricePcrChart data={hsp} />
         </Section>
-        <Section title="Housing Sale Price Trend Til 2025">
+        <Section title="Housing Sale Price Trend">
             <HousingSalePriceTrendChart data={hsp} />
             <HousingSalePricePcrTrendChart data={hsp} />
         </Section>

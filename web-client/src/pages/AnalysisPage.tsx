@@ -143,8 +143,9 @@ export default function AnalysisPage() {
             className="form-textarea"
         />
         <button onClick={handleSubmit} disabled={isLoading} className="btn-primary">
-            {isLoading ? 'Analyzing (this calls the paid AI API)…' : 'Start AI Analysis (uses paid API)'}
+            {isLoading ? 'Analyzing…' : 'Start AI Analysis'}
         </button>
+        <p style={{ fontSize: '0.85em', color: 'var(--text-muted)' }}>Runs a metered AI API call — please use thoughtfully.</p>
         {analysisResult && <div className="chart-panel"><ReactMarkdown>{analysisResult}</ReactMarkdown></div>}
         {error && <div className="form-error-text">{error}</div>}
 
