@@ -1,0 +1,24 @@
+@reference "../index.css";
+.insight-stat-card {
+  @apply flex flex-col gap-2;
+  flex: 1 1 260px;
+}
+.insight-stat-title {
+  @apply text-sm font-semibold;
+  color: var(--text-secondary);
+}
+.insight-stat-value {
+  @apply text-3xl font-bold;
+  color: var(--text-primary);
+  font-family: var(--font-display);
+}
+.insight-stat-value-positive {
+  color: var(--status-good);
+}
+.insight-stat-value-negative {
+  color: var(--status-serious);
+}
+.insight-stat-subtitle {
+  @apply text-xs;
+  color: var(--text-muted);
+}

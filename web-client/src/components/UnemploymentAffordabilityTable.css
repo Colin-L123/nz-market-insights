@@ -1,0 +1,26 @@
+@reference "../index.css";
+.affordability-impact-card {
+  flex: 1 1 320px;
+}
+.affordability-impact-title {
+  @apply text-sm font-semibold mb-1;
+  color: var(--text-secondary);
+}
+.affordability-impact-subtitle {
+  @apply text-xs mb-3;
+  color: var(--text-muted);
+}
+.affordability-impact-table {
+  @apply w-full text-sm text-left border-collapse;
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+}
+.affordability-impact-table th,
+.affordability-impact-table td {
+  @apply py-1 px-2;
+  border-bottom: 1px solid var(--gridline);
+}
+.affordability-impact-table th {
+  color: var(--text-muted);
+  font-weight: 500;
+}

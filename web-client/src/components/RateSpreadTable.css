@@ -1,0 +1,26 @@
+@reference "../index.css";
+.rate-spread-card {
+  flex: 1 1 320px;
+}
+.rate-spread-title {
+  @apply text-sm font-semibold mb-1;
+  color: var(--text-secondary);
+}
+.rate-spread-subtitle {
+  @apply text-xs mb-3;
+  color: var(--text-muted);
+}
+.rate-spread-table {
+  @apply w-full text-sm text-left border-collapse;
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+}
+.rate-spread-table th,
+.rate-spread-table td {
+  @apply py-1 px-2;
+  border-bottom: 1px solid var(--gridline);
+}
+.rate-spread-table th {
+  color: var(--text-muted);
+  font-weight: 500;
+}
