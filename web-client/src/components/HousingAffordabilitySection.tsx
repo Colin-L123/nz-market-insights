@@ -3,6 +3,7 @@ import type { HousingAffordabilitySelection } from "../types/HousingAffordabilit
 import HousingAffordabilityChart from "./HousingAffordabilityChart";
 import CategorySection from "./CategorySection";
 import MultiFilterSelect from "./MultiFilterSelect";
+import { formatDate } from "../utils/format";
 import '../styles/formControls.css'
 
 interface HousingAffordabilitySectionProps {
@@ -17,11 +18,9 @@ interface HousingAffordabilitySectionProps {
 
 export default function HousingAffordabilitySection({ checked, onCheckedChange, analyze, onAnalyzeChange, filter, onFilterChange, data
 }: HousingAffordabilitySectionProps) {
-    const availableAffAreaNames = [...new Set(data.map(d => d.areaName))]
-        const availableAffAreaTypes = [...new Set(data.map(d => d.areaType))]
+    const availableAffAreaNames = [...new Set(data.map(d => d.areaName))].sort()
+        const availableAffAreaTypes = [...new Set(data.map(d => d.areaType))].sort()
         const availableDates = [...new Set(data.map(d => d.recordDate))].sort()
-        const dateMin = availableDates[0]
-        const dateMax = availableDates[availableDates.length - 1]
         const filteredHousingAffordability = data.filter(d =>
             (!filter.areaName || filter.areaName.includes(d.areaName)) &&
             (!filter.areaType || filter.areaType.includes(d.areaType)) &&
@@ -47,18 +46,20 @@ export default function HousingAffordabilitySection({ checked, onCheckedChange, 
                     options={availableAffAreaTypes}
                     placeholder="All area types"
                 />
-                <input type="date" className="form-input"
-                    min={dateMin}
-                    max={dateMax}
+                <select className="form-select"
                     value={filter.dateFrom ?? ''}
                     onChange={(e) => onFilterChange({ ...filter, dateFrom: e.target.value || undefined })}
-                />
-                <input type="date" className="form-input"
-                    min={dateMin}
-                    max={dateMax}
+                >
+                    <option value="">Date from</option>
+                    {availableDates.map(d => <option key={d} value={d}>{formatDate(d)}</option>)}
+                </select>
+                <select className="form-select"
                     value={filter.dateTo ?? ''}
                     onChange={(e) => onFilterChange({ ...filter, dateTo: e.target.value || undefined })}
-                />
+                >
+                    <option value="">Date to</option>
+                    {availableDates.map(d => <option key={d} value={d}>{formatDate(d)}</option>)}
+                </select>
             </CategorySection>
             {checked && (
                 <div className="chart-panel">

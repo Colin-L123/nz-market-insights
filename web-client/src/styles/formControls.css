@@ -130,6 +130,31 @@
   margin: 0;
 }
 
+/* Year/date range pickers — a real <select> populated from the actual data
+   (not free-text typing) so users only ever pick a value that exists in the
+   database, restoring the "click to choose" flow the native datalist used to
+   give before it got ripped out for being unstylable. */
+.form-select {
+  @apply text-sm rounded-md py-1.5 transition-colors duration-150;
+  width: 160px;
+  padding-left: 10px;
+  padding-right: 28px;
+  background-color: var(--surface-1);
+  color: var(--text-primary);
+  border: 1px solid var(--gridline);
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2383868c' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+}
+.form-select:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 3px var(--accent-primary-soft);
+}
+
 .chart-panel {
   @apply rounded-lg p-4 mb-3;
   background-color: var(--surface-1);

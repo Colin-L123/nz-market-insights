@@ -17,7 +17,7 @@ interface FxRateSectionProps {
 
 export default function FxRateSection({ checked, onCheckedChange, analyze, onAnalyzeChange, filter, onFilterChange, data
 }: FxRateSectionProps) {
-    const availableTarget = [...new Set(data.map(t => t.targetCurrency))]
+    const availableTarget = [...new Set(data.map(t => t.targetCurrency))].sort()
     const filteredFxRates = data.filter(d =>
         !filter.target || filter.target.includes(d.targetCurrency)
     )

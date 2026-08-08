@@ -20,9 +20,8 @@ export default function EconomicIndicatorSection({
     checked, onCheckedChange, analyze, onAnalyzeChange, filter, onFilterChange, data
 }: EconomicIndicatorSectionProps) {
     const availbaleIndicators = [...new Set(data.map(d => d.indicatorName))]
+        .sort((a, b) => (indicatorLabels[a] ?? a).localeCompare(indicatorLabels[b] ?? b))
     const years = [...new Set(data.map(d => d.year))].sort((a, b) => a - b)
-    const yearMin = years.length ? Math.min(...years) : undefined
-    const yearMax = years.length ? Math.max(...years) : undefined
     const filteredData = data.filter(d =>
         (!filter.indicatorName || filter.indicatorName.includes(d.indicatorName)) &&
         (!filter.yearFrom || d.year >= filter.yearFrom) &&
@@ -43,20 +42,20 @@ export default function EconomicIndicatorSection({
                     placeholder="All indicators"
                     labelFor={(name) => indicatorLabels[name] ?? name}
                 />
-                <input type="number" className="form-input"
-                    placeholder="Year from"
-                    min={yearMin}
-                    max={yearMax}
+                <select className="form-select"
                     value={filter.yearFrom ?? ''}
                     onChange={(e) => onFilterChange({ ...filter, yearFrom: e.target.value ? Number(e.target.value) : undefined })}
-                />
-                <input type="number" className="form-input"
-                    placeholder="Year to"
-                    min={yearMin}
-                    max={yearMax}
+                >
+                    <option value="">Year from</option>
+                    {years.map(y => <option key={y} value={y}>{y}</option>)}
+                </select>
+                <select className="form-select"
                     value={filter.yearTo ?? ''}
                     onChange={(e) => onFilterChange({ ...filter, yearTo: e.target.value ? Number(e.target.value) : undefined })}
-                />
+                >
+                    <option value="">Year to</option>
+                    {years.map(y => <option key={y} value={y}>{y}</option>)}
+                </select>
             </CategorySection>
             {checked && (
                 <div className="chart-panel">

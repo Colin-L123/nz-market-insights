@@ -3,6 +3,7 @@ import type { BankRateSelection } from "../types/BankRateSelection";
 import BankRateChart from "./BankRateChart";
 import CategorySection from "./CategorySection";
 import MultiFilterSelect from "./MultiFilterSelect";
+import { termToDays } from "../utils/format";
 import '../styles/formControls.css'
 
 interface BankRateSectionProps {
@@ -17,8 +18,8 @@ interface BankRateSectionProps {
 
 export default function BankRateSection({ checked, onCheckedChange, analyze, onAnalyzeChange, filter, onFilterChange, data
 }: BankRateSectionProps) {
-    const availableBanks = [...new Set(data.map(d => d.bank))]
-    const availableTerms = [...new Set(data.map(d => d.term))]
+    const availableBanks = [...new Set(data.map(d => d.bank))].sort()
+    const availableTerms = [...new Set(data.map(d => d.term))].sort((a, b) => termToDays(a) - termToDays(b))
     const filteredBankRate = data.filter(d =>
         (!filter.bank || filter.bank.includes(d.bank)) &&
         (!filter.term || filter.term.includes(d.term))

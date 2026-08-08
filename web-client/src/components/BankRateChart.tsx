@@ -2,16 +2,7 @@ import EChartsReact from "echarts-for-react";
 import type { BankRate } from "../types/BankRate";
 import { seriesGradients } from "../styles/chartColors";
 import { chartBase, axisLineStyle, splitLineStyle } from "../styles/chartTheme";
-import { formatDate } from "../utils/format";
-
-function termToDays(term: string): number {
-    const [numStr, unit] = term.split(' ')
-    const num = Number(numStr)
-    if (unit.startsWith('day')) return num
-    if (unit.startsWith('month')) return num * 30
-    if (unit.startsWith('year')) return num * 365
-    return 0
-}
+import { formatDate, termToDays } from "../utils/format";
 
 export default function BankRateChart({data}: {data: BankRate[]}){
     const sorted = [...data].sort((a,b) => termToDays(a.term) - termToDays(b.term))

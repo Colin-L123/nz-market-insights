@@ -18,11 +18,9 @@ interface HousingSalePriceSectionProps {
 
 export default function HousingSalePriceSection({ checked, onCheckedChange, analyze, onAnalyzeChange, filter, onFilterChange, data
 }: HousingSalePriceSectionProps) {
-    const availableHspAreaNames = [...new Set(data.map(d => d.areaName))]
-    const availableHspAreaTypes = [...new Set(data.map(d => d.areaType))]
+    const availableHspAreaNames = [...new Set(data.map(d => d.areaName))].sort()
+    const availableHspAreaTypes = [...new Set(data.map(d => d.areaType))].sort()
     const hspYears = [...new Set(data.map(d => d.year))].sort((a, b) => a - b)
-    const hspYearMin = hspYears.length ? Math.min(...hspYears) : undefined
-    const hspYearMax = hspYears.length ? Math.max(...hspYears) : undefined
     const filteredHousingSalePrice = data.filter(d =>
         (!filter.areaName || filter.areaName.includes(d.areaName)) &&
         (!filter.areaType || filter.areaType.includes(d.areaType)) &&
@@ -49,20 +47,20 @@ export default function HousingSalePriceSection({ checked, onCheckedChange, anal
                     options={availableHspAreaTypes}
                     placeholder="All area types"
                 />
-                <input type="number" className="form-input"
-                    placeholder="Year from"
-                    min={hspYearMin}
-                    max={hspYearMax}
+                <select className="form-select"
                     value={filter.yearFrom ?? ''}
                     onChange={(e) => onFilterChange({ ...filter, yearFrom: e.target.value ? Number(e.target.value) : undefined })}
-                />
-                <input type="number" className="form-input"
-                    placeholder="Year to"
-                    min={hspYearMin}
-                    max={hspYearMax}
+                >
+                    <option value="">Year from</option>
+                    {hspYears.map(y => <option key={y} value={y}>{y}</option>)}
+                </select>
+                <select className="form-select"
                     value={filter.yearTo ?? ''}
                     onChange={(e) => onFilterChange({ ...filter, yearTo: e.target.value ? Number(e.target.value) : undefined })}
-                />
+                >
+                    <option value="">Year to</option>
+                    {hspYears.map(y => <option key={y} value={y}>{y}</option>)}
+                </select>
             </CategorySection>
             {checked && (
                 <div className="chart-panel">
