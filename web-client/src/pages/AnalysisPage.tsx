@@ -145,7 +145,7 @@ export default function AnalysisPage() {
         <button onClick={handleSubmit} disabled={isLoading} className="btn-primary">
             {isLoading ? 'Analyzing…' : 'Start AI Analysis'}
         </button>
-        <p style={{ fontSize: '0.85em', color: 'var(--text-muted)' }}>Runs a metered AI API call — please use thoughtfully.</p>
+        <p style={{ fontSize: '0.85em', color: 'var(--text-muted)' }}>AI-generated analysis may contain errors — please don't rely on it entirely, and be cautious with any investment or financial decisions.</p>
         {analysisResult && <div className="chart-panel"><ReactMarkdown>{analysisResult}</ReactMarkdown></div>}
         {error && <div className="form-error-text">{error}</div>}
 
