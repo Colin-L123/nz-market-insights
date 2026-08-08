@@ -3,11 +3,13 @@ import type { HousingAffordability } from "../types/HousingAffordability"
 import { seriesGradients } from "../styles/chartColors"
 import { chartBase, axisLineStyle, splitLineStyle } from "../styles/chartTheme"
 import { affordabilityMetrics, affordabilityValue, type AffordabilityMetric } from "./housingAffordabilityMetrics"
+import { majorCities } from "../constants"
 
 export default function HousingAffordabilityChart({ data, metric }: { data: HousingAffordability[], metric: AffordabilityMetric }) {
     const config = affordabilityMetrics[metric]
-    const latestDate = data.reduce((max, d) => d.recordDate > max ? d.recordDate : max, '')
-    const latest = data.filter(d => d.recordDate === latestDate)
+    const cityData = data.filter(d => majorCities.includes(d.areaName) && d.areaType === 'TA')
+    const latestDate = cityData.reduce((max, d) => d.recordDate > max ? d.recordDate : max, '')
+    const latest = cityData.filter(d => d.recordDate === latestDate)
 
     const areas = latest.map(d => d.areaName)
     const values = latest.map(d => affordabilityValue(d, metric))

@@ -3,11 +3,10 @@ import type { HousingSalePrice } from "../types/HousingSalePrice"
 import { seriesGradients } from "../styles/chartColors"
 import { chartBase, axisLineStyle, splitLineStyle } from "../styles/chartTheme"
 import { formatCompact } from "../utils/format"
-
-const majorCities = ["Auckland", "Wellington City", "Christchurch City", "Hamilton City", "Dunedin City", "Tauranga City"]
+import { majorCities } from "../constants"
 
 export default function HousingSalePriceChart({ data }: { data: HousingSalePrice[] }) {
-    const filtered = data.filter(d => majorCities.includes(d.areaName) && d.year !== 2026 && d.numberSales > 0)
+    const filtered = data.filter(d => majorCities.includes(d.areaName) && d.areaType === 'TA' && d.year !== 2026 && d.numberSales > 0)
     const latestYear = Math.max(...filtered.map(d => d.year))
     const latest = filtered.filter(d => d.year === latestYear)
 

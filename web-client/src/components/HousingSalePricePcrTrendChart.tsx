@@ -2,11 +2,10 @@ import EChartsReact from "echarts-for-react"
 import type { HousingSalePrice } from "../types/HousingSalePrice"
 import { seriesColors } from "../styles/chartColors"
 import { chartBase, axisLineStyle, splitLineStyle } from "../styles/chartTheme"
-
-const majorCities = ["Auckland", "Wellington City", "Christchurch City", "Hamilton City", "Dunedin City", "Tauranga City"]
+import { majorCities } from "../constants"
 
 export default function HousingSalePricePcrTrendChart({ data }: { data: HousingSalePrice[] }) {
-    const filtered = data.filter(d => majorCities.includes(d.areaName) && d.year !== 2026 && d.pcr != null)
+    const filtered = data.filter(d => majorCities.includes(d.areaName) && d.areaType === 'TA' && d.year !== 2026 && d.pcr != null)
     const years = [...new Set(filtered.map(d => d.year))].sort((a, b) => a - b)
     const areas = [...new Set(filtered.map(d => d.areaName))]
 

@@ -3,12 +3,11 @@ import type { HousingAffordability } from "../types/HousingAffordability"
 import { seriesColors } from "../styles/chartColors"
 import { chartBase, axisLineStyle, splitLineStyle } from "../styles/chartTheme"
 import { affordabilityMetrics, affordabilityValue, type AffordabilityMetric } from "./housingAffordabilityMetrics"
-
-const majorCities = ["Auckland", "Wellington City", "Christchurch City", "Hamilton City", "Dunedin City", "Tauranga City"]
+import { majorCities } from "../constants"
 
 export default function HousingAffordabilityTrendChart({ data, metric }: { data: HousingAffordability[], metric: AffordabilityMetric }) {
     const config = affordabilityMetrics[metric]
-    const filtered = data.filter(d => majorCities.includes(d.areaName))
+    const filtered = data.filter(d => majorCities.includes(d.areaName) && d.areaType === 'TA')
     const dates = [...new Set(filtered.map(d => d.recordDate))].sort()
     const areas = [...new Set(filtered.map(d => d.areaName))]
 
