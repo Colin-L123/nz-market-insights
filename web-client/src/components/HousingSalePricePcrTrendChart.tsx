@@ -31,7 +31,7 @@ export default function HousingSalePricePcrTrendChart({ data }: { data: HousingS
     return (
         <div>
             <EChartsReact option={option} />
-            <p style={{ fontSize: '0.85em', color: '#898781' }}>
+            <p style={{ fontSize: '0.85em', color: 'var(--text-muted)' }}>
                 PCR = Price per m² ÷ Cost per m² (of new builds). Higher = buying an existing home costs more than building new (land value premium); lower = building new is relatively pricier.<br />
                 PCR = 每平米成交价 ÷ 每平米建造成本。数值越高，说明买现房比自建更贵（地价溢价越大）；越低则说明新建相对更贵。
             </p>

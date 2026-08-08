@@ -58,3 +58,12 @@ CREATE TABLE IF NOT EXISTS loan_rates(
     rate numeric,
     fetched_at timestamp
 );
+
+-- 表7 market_insights: id(主键) / insight_key(text,唯一) / computed_at(timestamp) / payload(jsonb)
+-- 存 data-service 离线算好的分析结果(相关性、回归、投资信号等)，形状各不相同，用 jsonb 而不是逐项建表
+CREATE TABLE IF NOT EXISTS market_insights(
+    id serial primary key,
+    insight_key text UNIQUE NOT NULL,
+    computed_at timestamp NOT NULL,
+    payload jsonb NOT NULL
+);

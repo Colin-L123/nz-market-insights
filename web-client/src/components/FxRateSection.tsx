@@ -3,6 +3,7 @@ import type { FxRateSelection } from "../types/FxRateSelection";
 import FxRateChart from "./FxRateChart";
 import CategorySection from "./CategorySection";
 import MultiFilterSelect from "./MultiFilterSelect";
+import '../styles/formControls.css'
 
 interface FxRateSectionProps {
     checked: boolean
@@ -23,7 +24,7 @@ export default function FxRateSection({ checked, onCheckedChange, analyze, onAna
 return(
     <>
     <CategorySection label="Currency exchange rate" checked={checked} onCheckedChange={onCheckedChange}>
-                <label style={{ fontWeight: 'bold' }}>
+                <label className="form-checkbox-label">
                     <input type="checkbox" checked={analyze} onChange={(e) => onAnalyzeChange(e.target.checked)} />
                     Include in AI analysis
                 </label>
@@ -35,7 +36,7 @@ return(
                 />
             </CategorySection>
             {checked && (
-                <div style={{ border: '1px solid #ccc', borderRadius: '6px', padding: '8px' }}>
+                <div className="chart-panel">
                     <FxRateChart data={filteredFxRates} />
                 </div>
             )}

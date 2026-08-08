@@ -1,5 +1,5 @@
 from dotenv import load_dotenv
-import os, psycopg2
+import os, json, psycopg2
 from sqlalchemy import create_engine
 
 def get_connection():
@@ -45,7 +45,24 @@ def keep_history_table(table:str, columns:list[str],rows:list[tuple]):
     finally:
         conn.close()
 
+def upsert_insight(insight_key: str, payload: dict):
+    """Insert a market_insights row, or overwrite it if insight_key already exists (recomputed each run)."""
+    conn = get_connection()
+    try:
+        with conn.cursor() as cur:
+            cur.execute(
+                """
+                INSERT INTO market_insights (insight_key, computed_at, payload)
+                VALUES (%s, NOW(), %s)
+                ON CONFLICT (insight_key) DO UPDATE
+                SET computed_at = EXCLUDED.computed_at, payload = EXCLUDED.payload
+                """,
+                (insight_key, json.dumps(payload)),
+            )
+        conn.commit()
+    finally:
+        conn.close()
+
 
 if __name__ =="__main__":
     replace_table("bank_rates", ["bank", "term", "rate"], [("BNZ", "7 day", 1.7)])
-    

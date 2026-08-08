@@ -25,4 +25,5 @@ public class AppDbContext : DbContext
     public DbSet<HousingAffordability> HousingAffordability { get; set; }
     public DbSet<HousingSalePrice> HousingSalePrice { get; set; }
     public DbSet<LoanRate> LoanRates { get; set; }
+    public DbSet<MarketInsight> MarketInsights { get; set; }
 }

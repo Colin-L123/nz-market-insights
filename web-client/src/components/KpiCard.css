@@ -1,9 +1,6 @@
 @reference "../index.css";
 .kpi-card {
-  @apply rounded-lg p-4 shadow-lg;
   flex: 1 1 160px;
-  background-color: var(--surface-1);
-  color: var(--text-primary);
 }
 .kpi-grid {
   @apply flex flex-wrap gap-4;

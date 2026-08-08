@@ -2,6 +2,7 @@ import EChartsReact from "echarts-for-react"
 import type { HousingSalePrice } from "../types/HousingSalePrice"
 import { seriesColors } from "../styles/chartColors"
 import { chartBase, axisLineStyle, splitLineStyle } from "../styles/chartTheme"
+import { formatCompact } from "../utils/format"
 
 const majorCities = ["Auckland", "Wellington City", "Christchurch City", "Hamilton City", "Dunedin City", "Tauranga City"]
 
@@ -23,15 +24,16 @@ export default function HousingSalePriceTrendChart({ data }: { data: HousingSale
     const option = {
         ...chartBase('Average House Price by City', 'NZD per property, excluding incomplete 2026 data'),
         legend: { data: areas, top: 65 },
-        grid: { top: 115, left: 60, right: 30, bottom: 50, containLabel: true },
+        grid: { top: 115, left: 50, right: 30, bottom: 50, containLabel: true },
         xAxis: { type: 'category', data: years, axisLine: axisLineStyle },
         yAxis: {
             type: 'value',
             name: 'Average Price (NZD)',
             nameLocation: 'middle',
-            nameGap: 60,
+            nameGap: 40,
             axisLine: axisLineStyle,
-            splitLine: splitLineStyle
+            splitLine: splitLineStyle,
+            axisLabel: { formatter: formatCompact }
         },
         series: series
     }

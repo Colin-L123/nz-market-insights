@@ -1,6 +1,6 @@
 import EChartsReact from "echarts-for-react"
 import type { HousingAffordability } from "../types/HousingAffordability"
-import { seriesColors } from "../styles/chartColors"
+import { seriesGradients } from "../styles/chartColors"
 import { chartBase, axisLineStyle, splitLineStyle } from "../styles/chartTheme"
 import { affordabilityMetrics, affordabilityValue, type AffordabilityMetric } from "./housingAffordabilityMetrics"
 
@@ -17,12 +17,12 @@ export default function HousingAffordabilityChart({ data, metric }: { data: Hous
         grid: { top: 70, left: 60, right: 30, bottom: 50, containLabel: true },
         xAxis: { type: 'category', data: areas, axisLine: axisLineStyle },
         yAxis: { type: 'value', name: config.label, nameLocation: 'middle', nameGap: 40, axisLine: axisLineStyle, splitLine: splitLineStyle },
-        series: [{ type: 'bar', data: values, color: seriesColors[2] }]
+        series: [{ type: 'bar', data: values, color: seriesGradients[config.gradientIndex] }]
     }
     return (
         <div>
             <EChartsReact option={option} />
-            <p style={{ fontSize: '0.85em', color: '#898781' }}>
+            <p style={{ fontSize: '0.85em', color: 'var(--text-muted)' }}>
                 {config.captionEn}<br />{config.captionCn}
             </p>
         </div>

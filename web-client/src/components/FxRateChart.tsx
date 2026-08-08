@@ -1,6 +1,6 @@
 import EChartsReact from "echarts-for-react"
 import type { FxRate } from "../types/FxRate"
-import { seriesColors } from "../styles/chartColors"
+import { seriesGradients } from "../styles/chartColors"
 import { chartBase, axisLineStyle, splitLineStyle } from "../styles/chartTheme"
 import { formatDate } from "../utils/format"
 
@@ -14,7 +14,7 @@ export default function FxRateChart({ data }: { data: FxRate[] }) {
         grid: { top: 70, left: 60, right: 30, bottom: 50, containLabel: true },
         xAxis: { type: 'category', data: currencies, axisLine: axisLineStyle },
         yAxis: { type: 'value', name: 'Exchange Rate', nameLocation: 'middle', nameGap: 40, axisLine: axisLineStyle, splitLine: splitLineStyle },
-        series: [{ type: 'bar', data: rates, color: seriesColors[1] }]
+        series: [{ type: 'bar', data: rates, color: seriesGradients[4] }] // teal — currency/FX theme
     }
 
     return <EChartsReact option={option} />

@@ -1,4 +1,5 @@
 import { useState } from "react"
+import '../styles/formControls.css'
 
 export interface MultiFilterSelectProps {
     value: string[]
@@ -29,18 +30,14 @@ export default function MultiFilterSelect({ value, onChange, options, placeholde
     })
 
     return (
-        <details style={{ position: 'relative', width: '160px' }}>
-            <summary style={{ border: '1px solid gray', padding: '2px 4px', cursor: 'pointer' }}>{summary}</summary>
-            <div style={{
-                position: 'absolute', top: '100%', left: 0, width: '200px', marginTop: '2px',
-                background: 'white', border: '1px solid gray', borderRadius: '4px',
-                maxHeight: '220px', overflowY: 'auto', zIndex: 10, padding: '4px'
-            }}>
+        <details className="multi-select">
+            <summary className="multi-select-trigger">{summary}</summary>
+            <div className="multi-select-panel">
                 <input type="text" placeholder="Search..." value={search}
                     onChange={(e) => setSearch(e.target.value)}
-                    style={{ width: '100%', marginBottom: '4px', boxSizing: 'border-box' }} />
+                    className="multi-select-search" />
                 {filteredOptions.map(opt => (
-                    <label key={opt} style={{ display: 'block' }}>
+                    <label key={opt} className="multi-select-option">
                         <input type="checkbox"
                             checked={value.includes(opt)}
                             onChange={() => toggle(opt)} />

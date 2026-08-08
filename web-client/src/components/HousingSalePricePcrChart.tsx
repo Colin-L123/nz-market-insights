@@ -1,6 +1,6 @@
 import EChartsReact from "echarts-for-react"
 import type { HousingSalePrice } from "../types/HousingSalePrice"
-import { seriesColors } from "../styles/chartColors"
+import { seriesGradients } from "../styles/chartColors"
 import { chartBase, axisLineStyle, splitLineStyle } from "../styles/chartTheme"
 
 const majorCities = ["Auckland", "Wellington City", "Christchurch City", "Hamilton City", "Dunedin City", "Tauranga City"]
@@ -18,12 +18,12 @@ export default function HousingSalePricePcrChart({ data }: { data: HousingSalePr
         grid: { top: 70, left: 60, right: 30, bottom: 50, containLabel: true },
         xAxis: { type: 'category', data: areas, axisLine: axisLineStyle },
         yAxis: { type: 'value', name: 'PCR', nameLocation: 'middle', nameGap: 40, axisLine: axisLineStyle, splitLine: splitLineStyle },
-        series: [{ type: 'bar', data: values, color: seriesColors[4] }]
+        series: [{ type: 'bar', data: values, color: seriesGradients[1] }] // cyan — secondary metric paired with the blue "Average House Price" chart
     }
     return (
         <div>
             <EChartsReact option={option} />
-            <p style={{ fontSize: '0.85em', color: '#898781' }}>
+            <p style={{ fontSize: '0.85em', color: 'var(--text-muted)' }}>
                 PCR = Price per m² ÷ Cost per m² (of new builds). Higher = buying an existing home costs more than building new (land value premium); lower = building new is relatively pricier.<br />
                 PCR = 每平米成交价 ÷ 每平米建造成本。数值越高，说明买现房比自建更贵（地价溢价越大）；越低则说明新建相对更贵。
             </p>

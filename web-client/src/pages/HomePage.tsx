@@ -4,6 +4,7 @@ import { getHousingAffordability } from "../api/housingAffordability"
 import { getFxRates } from "../api/fxRates"
 import { getHousingSalePrice } from "../api/housingSalePrice"
 import { getLoanRates } from "../api/loanRates"
+import { getMarketInsights } from "../api/marketInsights"
 import useFetchData from "../hooks/useFetchData"
 
 import EconomicIndicatorChart from "../components/EconomicIndicatorChart"
@@ -20,6 +21,8 @@ import HousingSalePriceVolumeChart from "../components/HousingSalePriceVolumeCha
 import HousingSalePricePcrChart from "../components/HousingSalePricePcrChart"
 import HousingSalePricePcrTrendChart from "../components/HousingSalePricePcrTrendChart"
 import LoanRateChart from "../components/LoanRateChart"
+import MarketInsightsSection from "../components/MarketInsightsSection"
+import '../App.css'
 
 
 export default function HomePage() {
@@ -29,11 +32,15 @@ export default function HomePage() {
     const haff = useFetchData(getHousingAffordability)
     const hsp = useFetchData(getHousingSalePrice)
     const loanRate = useFetchData(getLoanRates)
+    const marketInsights = useFetchData(getMarketInsights)
 
     return <div className="home-page">
-        <h1 className="home-page-title">Default Display (Chart + AI Summary) — In Progress</h1>
+        <h1 className="home-page-title gradient-text">Default Display (Chart + AI Summary) — In Progress</h1>
         <Section title="Key Indicator">
             <EconomicIndicatorKpis data={ecoIndi} />
+        </Section>
+        <Section title="Market Insights — Is Now a Good Time to Buy?">
+            <MarketInsightsSection data={marketInsights} />
         </Section>
         <Section title="Yearly Trend">
             <EconomicIndicatorChart data={ecoIndi} />
@@ -47,12 +54,12 @@ export default function HomePage() {
         <Section title="Exchange Rates">
             <FxRateChart data={fxRate} />
         </Section>
-        <Section title="Housing Affordbility">
+        <Section title="Housing Affordability">
             <HousingAffordabilityChart data={haff} metric="mortgage" />
             <HousingAffordabilityChart data={haff} metric="deposit" />
             <HousingAffordabilityChart data={haff} metric="rent" />
         </Section>
-        <Section title="Housing Affordbility Trend Til 2025">
+        <Section title="Housing Affordability Trend Til 2025">
             <HousingAffordabilityTrendChart data={haff} metric="mortgage" />
             <HousingAffordabilityTrendChart data={haff} metric="deposit" />
             <HousingAffordabilityTrendChart data={haff} metric="rent" />

@@ -1,23 +1,74 @@
 :root {
-  --surface-1: #1a1a19;
-  --surface-page: #0d0d0d;
-  --text-primary: #ffffff;
-  --text-secondary: #c3c2b7;
-  --text-muted: #898781;
-  --gridline: #2c2c2a;
-  --baseline: #383835;
+  /* surfaces — clean light theme: near-white page, pure white cards so cards
+     lift slightly off the page without needing glass/blur effects */
+  --surface-page: #f7f7f5;
+  --surface-1: #ffffff;
+  --surface-2: #eeeeea;
+  --text-primary: #16191c;
+  --text-secondary: #53565c;
+  --text-muted: #83868c;
+  --gridline: #e6e6e1;
+  --baseline: #cfcfc8;
 
-  --series-1: #3987e5;
-  --series-2: #d95926;
-  --series-3: #199e70;
-  --series-4: #c98500;
-  --series-5: #d55181;
-  --series-6: #008300;
-  --series-7: #9085e9;
-  --series-8: #e66767;
+  /* brand accent: a single restrained steel blue, used deliberately (not scattered).
+     Cyan/violet only show up as secondary tones for the rare chart that needs to
+     compare several series in the same view — most charts should just use
+     --accent-primary. Chosen over green because a flat saturated green read as
+     "cheap" on every single-series chart; this blue is the classic fintech-dashboard
+     pairing with a white surface (Stripe/Mercury/Ramp all lean on it). */
+  --accent-primary: #2563eb;
+  --accent-primary-soft: rgba(37, 99, 235, 0.08);
+  --accent-cyan: #0891b2;
 
-  --status-good: #0ca30c;
-  --status-warning: #fab219;
-  --status-serious: #ec835a;
-  --status-critical: #d03b3b;
+  /* gradient used by .gradient-text — deep stops so it stays readable on the
+     light page background (most of the site). The sticky nav keeps its own
+     brighter --nav-accent-gradient since it sits on a dark bar. */
+  --accent-gradient: linear-gradient(90deg, #2563eb, #0891b2 55%, #7c3aed);
+
+  /* card system: plain bordered surface + soft shadow instead of glass/blur —
+     blur only reads well over the old dark ambient-glow background */
+  --glass-bg: var(--surface-1);
+  --glass-border: #e8e8e3;
+  --glass-border-hover: rgba(37, 99, 235, 0.35);
+  --glass-glow: 0 1px 2px rgba(22, 25, 28, 0.04), 0 1px 0 rgba(22, 25, 28, 0.03);
+  --glass-glow-hover: 0 10px 24px rgba(22, 25, 28, 0.08), 0 1px 0 rgba(22, 25, 28, 0.03);
+
+  /* the sticky top nav is the one deliberately-dark band on the page (the
+     "intro" strip), so it needs its own fixed-dark palette that doesn't flip
+     when the rest of the site is in light mode. Kept translucent (not solid)
+     over a strong blur so it reads as frosted glass, with a soft fade at the
+     bottom edge instead of a hard border into the light content below. */
+  --nav-bg: rgba(12, 14, 17, 0.6);
+  --nav-bg-to: rgba(12, 14, 17, 0);
+  --nav-text: #c7c6bc;
+  --nav-text-hover: #ffffff;
+  --nav-surface-hover: rgba(255, 255, 255, 0.08);
+  --nav-border: rgba(255, 255, 255, 0.08);
+  --nav-accent: #60a5fa;
+  --nav-accent-bg: rgba(96, 165, 250, 0.16);
+  --nav-accent-gradient: linear-gradient(90deg, #3b82f6, #22d3ee, #8b5cf6);
+
+  /* chart series palette. Rule: single-series charts (most of them) always use
+     --series-1 (steel blue) for consistency across the whole site — do not scatter
+     different single-series charts across different colors "for variety", that's
+     what made the first pass feel noisy. The full 6-color set below only gets used
+     by the few charts that genuinely plot several series at once (e.g. comparing
+     6 cities in one chart). Deep enough shades to keep contrast against the white
+     chart background. */
+  --series-1: #2563eb;
+  --series-2: #0891b2;
+  --series-3: #d97706;
+  --series-4: #7c3aed;
+  --series-5: #0d9488;
+  --series-6: #64748b;
+
+  /* semantic status colors — unrelated to the brand accent above, this is the
+     universal green-good/red-bad convention for deltas (InsightStatCard,
+     CapitalAllocationChart), so it stays green regardless of the chart palette. */
+  --status-good: #059669;
+  --status-warning: #d97706;
+  --status-serious: #ea580c;
+  --status-critical: #dc2626;
+
+  --font-display: 'Space Grotesk', system-ui, 'Segoe UI', Roboto, sans-serif;
 }

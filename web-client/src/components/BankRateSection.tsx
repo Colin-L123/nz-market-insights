@@ -3,6 +3,7 @@ import type { BankRateSelection } from "../types/BankRateSelection";
 import BankRateChart from "./BankRateChart";
 import CategorySection from "./CategorySection";
 import MultiFilterSelect from "./MultiFilterSelect";
+import '../styles/formControls.css'
 
 interface BankRateSectionProps {
     checked: boolean
@@ -25,7 +26,7 @@ export default function BankRateSection({ checked, onCheckedChange, analyze, onA
  return(
     <>
     <CategorySection label="Bank Rate" checked={checked} onCheckedChange={onCheckedChange}>
-                <label style={{ fontWeight: 'bold' }}>
+                <label className="form-checkbox-label">
                     <input type="checkbox" checked={analyze} onChange={(e) => onAnalyzeChange(e.target.checked)} />
                     Include in AI analysis
                 </label>
@@ -43,7 +44,7 @@ export default function BankRateSection({ checked, onCheckedChange, analyze, onA
                 />
             </CategorySection>
             {checked && (
-                <div style={{ border: '1px solid #ccc', borderRadius: '6px', padding: '8px' }}>
+                <div className="chart-panel">
                     <BankRateChart data={filteredBankRate} />
                 </div>
             )}

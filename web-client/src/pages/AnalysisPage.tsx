@@ -18,6 +18,7 @@ import BankRateSection from "../components/BankRateSection"
 import FxRateSection from "../components/FxRateSection"
 import HousingAffordabilitySection from "../components/HousingAffordabilitySection"
 import HousingSalePriceSection from "../components/HousingSalePriceSection"
+import '../styles/formControls.css'
 
 export default function AnalysisPage() {
     const [includeEconomicIndicators, setIncludeEconomicIndicators] = useState(true)
@@ -86,7 +87,7 @@ export default function AnalysisPage() {
         }
     }
 
-    return <div className="placeholder-page" style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+    return <div className="placeholder-page max-w-6xl mx-auto flex flex-col gap-4">
         <EconomicIndicatorSection
             checked={includeEconomicIndicators}
             onCheckedChange={setIncludeEconomicIndicators}
@@ -139,21 +140,13 @@ export default function AnalysisPage() {
         <textarea value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
             placeholder="Ask questions to AI, please type here"
+            className="form-textarea"
         />
-        <button onClick={handleSubmit} disabled={isLoading} style={{
-            backgroundColor: isLoading ? '#999' : '#d9534f',
-            color: 'white',
-            fontWeight: 'bold',
-            padding: '10px 20px',
-            border: 'none',
-            borderRadius: '6px',
-            cursor: isLoading ? 'default' : 'pointer',
-            width: 'fit-content'
-        }}>
+        <button onClick={handleSubmit} disabled={isLoading} className="btn-primary">
             {isLoading ? 'Analyzing (this calls the paid AI API)…' : 'Start AI Analysis (uses paid API)'}
         </button>
-        {analysisResult && <ReactMarkdown>{analysisResult}</ReactMarkdown>}
-        {error && <div style={{ color: 'red' }}>{error}</div>}
+        {analysisResult && <div className="chart-panel"><ReactMarkdown>{analysisResult}</ReactMarkdown></div>}
+        {error && <div className="form-error-text">{error}</div>}
 
     </div>
 }

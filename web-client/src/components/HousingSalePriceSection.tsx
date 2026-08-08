@@ -4,6 +4,7 @@ import HousingSalePriceChart from "./HousingSalePriceChart";
 import HousingSalePricePcrChart from "./HousingSalePricePcrChart";
 import CategorySection from "./CategorySection";
 import MultiFilterSelect from "./MultiFilterSelect";
+import '../styles/formControls.css'
 
 interface HousingSalePriceSectionProps {
     checked: boolean
@@ -32,7 +33,7 @@ export default function HousingSalePriceSection({ checked, onCheckedChange, anal
     return (
         <>
             <CategorySection label="Housing Sale Price" checked={checked} onCheckedChange={onCheckedChange}>
-                <label style={{ fontWeight: 'bold' }}>
+                <label className="form-checkbox-label">
                     <input type="checkbox" checked={analyze} onChange={(e) => onAnalyzeChange(e.target.checked)} />
                     Include in AI analysis
                 </label>
@@ -48,17 +49,14 @@ export default function HousingSalePriceSection({ checked, onCheckedChange, anal
                     options={availableHspAreaTypes}
                     placeholder="All area types"
                 />
-                <input type="number" list="hsp-year-options" style={{ width: '160px' }}
+                <input type="number" className="form-input"
                     placeholder="Year from"
                     min={hspYearMin}
                     max={hspYearMax}
                     value={filter.yearFrom ?? ''}
                     onChange={(e) => onFilterChange({ ...filter, yearFrom: e.target.value ? Number(e.target.value) : undefined })}
                 />
-                <datalist id="hsp-year-options">
-                    {hspYears.map(y => <option key={y} value={y} />)}
-                </datalist>
-                <input type="number" list="hsp-year-options" style={{ width: '160px' }}
+                <input type="number" className="form-input"
                     placeholder="Year to"
                     min={hspYearMin}
                     max={hspYearMax}
@@ -67,7 +65,7 @@ export default function HousingSalePriceSection({ checked, onCheckedChange, anal
                 />
             </CategorySection>
             {checked && (
-                <div style={{ border: '1px solid #ccc', borderRadius: '6px', padding: '8px' }}>
+                <div className="chart-panel">
                     <HousingSalePriceChart data={filteredHousingSalePrice} />
                     <HousingSalePricePcrChart data={filteredHousingSalePrice} />
                 </div>

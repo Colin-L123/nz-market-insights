@@ -33,7 +33,7 @@ export default function HousingAffordabilityTrendChart({ data, metric }: { data:
     return (
         <div>
             <EChartsReact option={option} />
-            <p style={{ fontSize: '0.85em', color: '#898781' }}>
+            <p style={{ fontSize: '0.85em', color: 'var(--text-muted)' }}>
                 {config.captionEn}<br />{config.captionCn}
             </p>
         </div>

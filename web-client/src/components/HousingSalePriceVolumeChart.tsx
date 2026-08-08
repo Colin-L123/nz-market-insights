@@ -2,6 +2,7 @@ import EChartsReact from "echarts-for-react"
 import type { HousingSalePrice } from "../types/HousingSalePrice"
 import { seriesColors } from "../styles/chartColors"
 import { chartBase, axisLineStyle, splitLineStyle } from "../styles/chartTheme"
+import { formatCompact } from "../utils/format"
 
 const majorCities = ["Auckland", "Wellington City", "Christchurch City", "Hamilton City", "Dunedin City", "Tauranga City"]
 
@@ -25,7 +26,10 @@ export default function HousingSalePriceVolumeChart({ data }: { data: HousingSal
         legend: { data: areas, top: 65 },
         grid: { top: 115, left: 50, right: 30, bottom: 50, containLabel: true },
         xAxis: { type: 'category', data: years, axisLine: axisLineStyle },
-        yAxis: { type: 'value', name: 'Number of Sales', nameLocation: 'middle', nameGap: 50, axisLine: axisLineStyle, splitLine: splitLineStyle },
+        yAxis: {
+            type: 'value', name: 'Number of Sales', nameLocation: 'middle', nameGap: 40,
+            axisLine: axisLineStyle, splitLine: splitLineStyle, axisLabel: { formatter: formatCompact }
+        },
         series: series
     }
     return <EChartsReact option={option} />

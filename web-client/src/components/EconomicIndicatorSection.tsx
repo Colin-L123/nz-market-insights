@@ -4,6 +4,7 @@ import { indicatorLabels } from "../types/EconomicIndicator"
 import CategorySection from "./CategorySection"
 import MultiFilterSelect from "./MultiFilterSelect"
 import EconomicIndicatorChart from "./EconomicIndicatorChart"
+import '../styles/formControls.css'
 
 interface EconomicIndicatorSectionProps {
     checked: boolean
@@ -30,8 +31,8 @@ export default function EconomicIndicatorSection({
 
     return (
         <>
-            <CategorySection label="Economic Indicetors" checked={checked} onCheckedChange={onCheckedChange}>
-                <label style={{ fontWeight: 'bold' }}>
+            <CategorySection label="Economic Indicators" checked={checked} onCheckedChange={onCheckedChange}>
+                <label className="form-checkbox-label">
                     <input type="checkbox" checked={analyze} onChange={(e) => onAnalyzeChange(e.target.checked)} />
                     Include in AI analysis
                 </label>
@@ -42,17 +43,14 @@ export default function EconomicIndicatorSection({
                     placeholder="All indicators"
                     labelFor={(name) => indicatorLabels[name] ?? name}
                 />
-                <input type="number" list="year-options" style={{ width: '160px' }}
+                <input type="number" className="form-input"
                     placeholder="Year from"
                     min={yearMin}
                     max={yearMax}
                     value={filter.yearFrom ?? ''}
                     onChange={(e) => onFilterChange({ ...filter, yearFrom: e.target.value ? Number(e.target.value) : undefined })}
                 />
-                <datalist id="year-options">
-                    {years.map(y => <option key={y} value={y} />)}
-                </datalist>
-                <input type="number" list="year-options" style={{ width: '160px' }}
+                <input type="number" className="form-input"
                     placeholder="Year to"
                     min={yearMin}
                     max={yearMax}
@@ -61,7 +59,7 @@ export default function EconomicIndicatorSection({
                 />
             </CategorySection>
             {checked && (
-                <div style={{ border: '1px solid #ccc', borderRadius: '6px', padding: '8px' }}>
+                <div className="chart-panel">
                     <EconomicIndicatorChart data={filteredData} />
                 </div>
             )}

@@ -3,6 +3,7 @@ import type { HousingAffordabilitySelection } from "../types/HousingAffordabilit
 import HousingAffordabilityChart from "./HousingAffordabilityChart";
 import CategorySection from "./CategorySection";
 import MultiFilterSelect from "./MultiFilterSelect";
+import '../styles/formControls.css'
 
 interface HousingAffordabilitySectionProps {
     checked: boolean
@@ -30,7 +31,7 @@ export default function HousingAffordabilitySection({ checked, onCheckedChange, 
  return(
     <>
     <CategorySection label="Housing Affordability" checked={checked} onCheckedChange={onCheckedChange}>
-                <label style={{ fontWeight: 'bold' }}>
+                <label className="form-checkbox-label">
                     <input type="checkbox" checked={analyze} onChange={(e) => onAnalyzeChange(e.target.checked)} />
                     Include in AI analysis
                 </label>
@@ -46,16 +47,13 @@ export default function HousingAffordabilitySection({ checked, onCheckedChange, 
                     options={availableAffAreaTypes}
                     placeholder="All area types"
                 />
-                <input type="date" list="haff-date-options" style={{ width: '160px' }}
+                <input type="date" className="form-input"
                     min={dateMin}
                     max={dateMax}
                     value={filter.dateFrom ?? ''}
                     onChange={(e) => onFilterChange({ ...filter, dateFrom: e.target.value || undefined })}
                 />
-                <datalist id="haff-date-options">
-                    {availableDates.map(d => <option key={d} value={d} />)}
-                </datalist>
-                <input type="date" list="haff-date-options" style={{ width: '160px' }}
+                <input type="date" className="form-input"
                     min={dateMin}
                     max={dateMax}
                     value={filter.dateTo ?? ''}
@@ -63,7 +61,7 @@ export default function HousingAffordabilitySection({ checked, onCheckedChange, 
                 />
             </CategorySection>
             {checked && (
-                <div style={{ border: '1px solid #ccc', borderRadius: '6px', padding: '8px' }}>
+                <div className="chart-panel">
                     <HousingAffordabilityChart data={filteredHousingAffordability} metric="mortgage" />
                     <HousingAffordabilityChart data={filteredHousingAffordability} metric="deposit" />
                     <HousingAffordabilityChart data={filteredHousingAffordability} metric="rent" />

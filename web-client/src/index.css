@@ -11,10 +11,31 @@ body {
   font-family: system-ui, 'Segoe UI', Roboto, sans-serif;
   background-color: var(--surface-page);
   color: var(--text-primary);
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* ambient gradient tints, fixed behind all content for depth without distraction —
+   much lower alpha than the old dark-theme version since color reads more strongly
+   against a light page than it did against near-black */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(600px circle at 15% 10%, rgba(5, 150, 105, 0.06), transparent 60%),
+    radial-gradient(500px circle at 85% 55%, rgba(8, 145, 178, 0.05), transparent 60%),
+    radial-gradient(700px circle at 50% 100%, rgba(124, 58, 237, 0.04), transparent 60%);
+  pointer-events: none;
 }
 
 p {
   margin: 0;
+}
+
+h1, h2, h3 {
+  font-family: var(--font-display);
 }
 
 #root {

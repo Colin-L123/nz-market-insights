@@ -1,18 +1,89 @@
 @reference "./index.css";
 
+/* Shared card primitive — every card-like surface in the app (KpiCard, InsightStatCard,
+   RateSpreadTable, chart tiles, etc.) composes this instead of redefining its own card chrome.
+   Plain white surface + hairline border + soft shadow — no blur, that was only doing work
+   over the old dark ambient-glow background. */
+.glass-card {
+  @apply rounded-xl p-4 transition-all duration-300;
+  background-color: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-glow);
+}
+.glass-card:hover {
+  border-color: var(--glass-border-hover);
+  box-shadow: var(--glass-glow-hover);
+  transform: translateY(-3px);
+}
+
+/* Gradient text utility, used for hero numbers / featured headings */
+.gradient-text {
+  background: var(--accent-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Deliberately dark — the one contrasting band on an otherwise light page,
+   using the fixed --nav-* tokens (not the shared light-theme tokens) so it
+   doesn't flip when the rest of the site is in light mode. The bar itself
+   is dark (so nav text/links keep contrast), then an ::after "skirt" beneath
+   it carries the fade the rest of the way down to fully transparent — a real
+   black-to-white transition into the page, just spread over a taller distance
+   than the slim nav bar could hold on its own. */
 .main-nav {
-  @apply flex gap-6 px-8 py-4;
-  background-color: var(--surface-1);
-  border-bottom: 1px solid var(--gridline);
+  @apply sticky top-0 z-50 flex items-center gap-2 px-8 py-4;
+  position: sticky;
+  background-color: var(--nav-bg);
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
 }
-
+.main-nav::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  height: 90px;
+  /* a straight 2-stop fade reads as a hard edge near the transparent end (alpha
+     falls off linearly but the eye doesn't perceive it that way) — easing
+     through several stops spreads the falloff so it looks like an actual
+     atmosphere fading out instead of a stripe with a cutoff line. Kept fairly
+     short on purpose: this sits in its own stacking context above whatever
+     content is directly below the nav (KPI cards, the first filter panel), so
+     a taller skirt means more of that content sits under a persistent tint
+     even without scrolling — not just during the transition moment. */
+  background: linear-gradient(to bottom,
+    var(--nav-bg) 0%,
+    rgba(12, 14, 17, 0.42) 22%,
+    rgba(12, 14, 17, 0.22) 42%,
+    rgba(12, 14, 17, 0.1) 62%,
+    rgba(12, 14, 17, 0.03) 82%,
+    var(--nav-bg-to) 100%
+  );
+  pointer-events: none;
+}
+.main-nav-brand {
+  @apply font-bold text-lg mr-6 no-underline;
+  font-family: var(--font-display);
+}
+.main-nav-brand.gradient-text {
+  background: var(--nav-accent-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
 .main-nav-link {
-  @apply font-medium no-underline;
-  color: var(--text-secondary);
+  @apply font-medium no-underline text-sm px-3 py-1.5 rounded-md transition-colors duration-200;
+  color: var(--nav-text);
 }
-
 .main-nav-link:hover {
-  color: var(--text-primary);
+  color: var(--nav-text-hover);
+  background-color: var(--nav-surface-hover);
+}
+.main-nav-link-active {
+  color: var(--nav-accent);
+  background-color: var(--nav-accent-bg);
 }
 
 .placeholder-page {

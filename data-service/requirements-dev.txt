@@ -1,2 +1,9 @@
 -r requirements.txt
 pytest
+pytest-cov
+matplotlib
+seaborn
+jupyter
+ipykernel
+scipy
+statsmodels
