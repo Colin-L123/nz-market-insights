@@ -28,9 +28,9 @@
 | Phase 3 | Week 5-6 | C# Web API（基础 GET + 个性化分析接口） | ✅ 已完成 —— 5张表基础GET接口 + AI个性化分析接口（多态DTO + Service层 + 官方Claude SDK）全部跑通 |
 | Phase 4 | Week 7 | React 前端（默认展示 + AI个性化交互 + 用户自主筛选） | ✅ 已完成 —— `HomePage`（默认展示）+ `AnalysisPage`（AI 交互与自主筛选合并成一个页面，含图表、多选筛选、成本控制） |
 | **Phase 5** | **Week 8** | **整合联调** | 🔄 **核心链路已验证跑通**（抓数据→存库→C# API→React 展示，含 AI 分析，端到端测试通过），**下一步**：过一遍 Week1-7 剩下的边界情况/错误处理细节 |
-| Phase 6 | Week 9-10 | 容器化 + AWS 部署 + 定时任务 + 历史数据追加模式 | 🔄 核心部署+定时任务+自定义域名已完成(详见 [DEPLOYMENT.md](DEPLOYMENT.md))，剩 RDS(暂缓)/趋势图(待数据积累) |
-| Phase 7 | Week 11 | 测试 + 文档 + 数据分析深化 | 🔄 测试+CI/CD+数据深化已完成，剩 README |
-| Phase 8 | Week 12 | 收尾与面试冲刺 | ⬜ 未开始 |
+| Phase 6 | Week 9-10 | 容器化 + AWS 部署 + 定时任务 + 历史数据追加模式 | 🔄 核心部署+定时任务+自定义域名+Market Insights 功能全链路上线+`load_data.py` 单源故障隔离已完成(详见 [DEPLOYMENT.md](DEPLOYMENT.md))，剩 RDS(暂缓)/趋势图(待数据积累) |
+| Phase 7 | Week 11 | 测试 + 文档 + 数据分析深化 | ✅ 已完成 —— 测试+CI/CD+数据深化+README 全部完成 |
+| Phase 8 | Week 12 | 收尾与面试冲刺 | 🔄 整体视觉/布局优化已完成，剩简历项目描述、模拟面试自查 |
 
 **进度判断：没有拖沓**——Phase 1+2 实际比计划更快完成（Week1+2 花6天，原计划更长），Phase 3、Phase 4 都已完成，Phase 5 的核心链路验证也已经跑通，仍在正常节奏内，不算落后。
 
@@ -141,13 +141,15 @@
   - **达成标志**：✅ 一份"跨数据源"的分析结论(见上，10项，含图表，中英双语)
 - **CI/CD ✅ 已完成**（`.github/workflows/ci-cd.yml`）：`push`/`pull_request` 自动并行跑三边测试（`dotnet test`+`pytest`+`vitest run`）。额外加了一个 `deploy` job 做 CD——`workflow_dispatch`（手动点击触发，不会自动跑）+ `needs` 依赖三个测试 job 全过才执行，用 `appleboy/ssh-action` SSH 到 EC2 跑 `git pull && docker compose up -d --build`。**故意没有在仓库 Secrets 里配置 `EC2_HOST`/`EC2_SSH_KEY`**，流程完整可用但不会真的触发部署，避免风险，以后需要真启用时自己去仓库设置里加这两个 Secret 即可。YAML 语法已本地校验通过，还没有通过真实 push 触发验证过 Actions 实际运行结果。
 - **学习要点**：xUnit/pytest/Vitest 写法、`WebApplicationFactory`+EF Core InMemory 集成测试、依赖倒置（为可测试性抽接口）、技术文档写作、SQL JOIN/窗口函数、pandas 进阶聚合、数据可视化基础、简单线性回归、CI/CD 基础概念（GitHub Actions workflow 语法、`needs`/`if`/`workflow_dispatch`）
-- **达成标志**：✅ 三边测试全部写完且本地全过（C# 9个 + Python 10个 + 前端 5个）；✅ CI/CD workflow 写完并已 push 到 GitHub 真实验证跑通（三个 job 全绿，`Status: Success`）；✅ 至少一份"跨数据源"的分析结论和对应图表（`deep_analysis.ipynb`，6项分析）；⬜ `README.md` 完善（Phase 7 最后剩这一项）
+- **达成标志**：✅ 三边测试全部写完且本地全过（C# 9个 + Python 10个 + 前端 5个）；✅ CI/CD workflow 写完并已 push 到 GitHub 真实验证跑通（三个 job 全绿，`Status: Success`）；✅ 至少一份"跨数据源"的分析结论和对应图表（`deep_analysis.ipynb`，6项分析）；✅ `README.md` 完善（中英双语，架构图+技术栈+功能说明+工程笔记，面向面试官/雇主）
 - **项目结构性覆盖不到、但NZ市场DA岗位明确要求的两项（建议项目外单独练，不适合硬塞进这个full-stack项目）**：进阶Excel（复杂公式/透视表/PowerQuery）、Power BI/Shiny 仪表盘经验——这两个是具体工具技能，跟"你能不能写代码"是两回事，如果目标岗位偏DA，建议找时间单独用这个项目的同一份数据在Power BI里做1-2个仪表盘练手，跟主项目脱钩、不影响主线进度
 
-### Phase 8／Week 12 — 收尾与面试冲刺
+### Phase 8／Week 12 — 收尾与面试冲刺 🔄 进行中
 - **任务**：项目打磨（UI 细节、代码整理）、简历项目描述写好、模拟面试自查
-- **整体视觉/布局优化（明确记录，等所有功能内容都加完再做，不要中途插入）**：用户反馈当前整体页面视觉效果差——等首页把 Market Insights 这批新内容全部加完，统一做一轮布局、CSS、视觉效果打磨，目标是"高端、有质感"，不是现在这种功能优先、样式随意堆砌的状态。放在最后做，避免边加功能边改样式来回返工
-- **达成标志**：能流畅讲清楚"这个项目做了什么、为什么这样设计、遇到什么问题怎么解决的"
+- **整体视觉/布局优化 ✅ 已完成**：全站从暗色主题改成浅色/白底主题，主色从翡翠绿换成钢蓝色（单一协调色板、按图表主题分配不同色相，柱状图加浅→深渐变），导航栏改成半透明磨砂+黑白渐变过渡；自定义 checkbox（开关样式用于分类启用/AI分析勾选，圆形对勾+弹跳动画用于多选列表）、自定义下拉菜单、年份/日期筛选从原生 datalist 改成真正的 `<select>`（选项直接来自数据库实际范围，不能手动乱输）；修了一批图表布局问题（LoanRateChart 高度压缩、HousingSalePriceChart 偏右、多个筛选下拉排序不对、"Auckland" 因为 TA/EUA 两种地理口径撞名重复显示两次）；清理了残留的开发期占位文案（首页标题"In Progress"、Section 标题里硬编码的"Til 2025"、AI 按钮上的"paid API"备忘条）
+- **Market Insights 功能全链路上线（原计划外，做完顺带完成）**：`market_insights` 表手动建表（`schema.sql` 只在数据卷全新时自动跑，已有数据的实例改表结构必须手动 `CREATE TABLE`）、`compute_insights.py` 跑通并补上遗漏的生产依赖（`scipy` 之前只在 `requirements-dev.txt`，导致容器里 `ModuleNotFoundError`）
+- **数据管道健壮性修复（原计划外）**：`load_data.py` 原来五个抓取函数顺序执行、无错误处理，`load_fx_rates`（Frankfurter API 超时）崩溃直接导致排在它后面的 `load_economic_indicators`/`load_housing` 静默不执行——改成每个源独立 try/except，一个源失败不拖累其他；顺带把偏紧的 10 秒超时调宽到 25 秒
+- **达成标志**：能流畅讲清楚"这个项目做了什么、为什么这样设计、遇到什么问题怎么解决的"；⬜ 简历项目描述；⬜ 模拟面试自查
 
 ---
 
