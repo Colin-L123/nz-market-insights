@@ -13,7 +13,7 @@ HEADERS = {
 }
 def fetch_page(url: str) -> dict:
     """fetch currency exchange rate"""
-    response = requests.get(url, headers=HEADERS, params={"base": "NZD", "symbols": "USD,EUR,CNY,AUD,GBP,JPY,SGD"}, timeout=10)
+    response = requests.get(url, headers=HEADERS, params={"base": "NZD", "symbols": "USD,EUR,CNY,AUD,GBP,JPY,SGD"}, timeout=25)
     response.raise_for_status()#check for status code, 200/400/500?
     return response.json()
 

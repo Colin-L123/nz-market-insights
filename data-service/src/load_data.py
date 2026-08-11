@@ -63,8 +63,11 @@ def na_to_none(value):
 
     
 if __name__ == "__main__":
-    load_bank_rates()
-    load_loan_rates()
-    load_fx_rates()
-    load_economic_indicators()
-    load_housing()
+    # cron runs this unattended every 3 days — one source timing out (e.g. a flaky
+    # third-party API) shouldn't crash the script and skip every source after it,
+    # like fx_rates did to economic_indicators/housing on 2026-08-10.
+    for load_fn in (load_bank_rates, load_loan_rates, load_fx_rates, load_economic_indicators, load_housing):
+        try:
+            load_fn()
+        except Exception as e:
+            print(f"{load_fn.__name__} failed, skipping: {e}")
